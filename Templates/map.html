@@ -165,7 +165,7 @@
         if (props === undefined){
             this._div.innerHTML = '<h4>Gloal Carbon Dioxide Emissions</h4>' +  'Hover over a country';
         }
-        else if (props.carbon_dioxide_level  === undefined) {
+        else if (props.carbon_dioxide_level === undefined) {
             this._div.innerHTML = '<h4>Gloal Carbon Dioxide Emissions</h4>' +  (props ?
             '<b>' + props.ADMIN + '</b><br />'+ 'No data provided for this country'
             : 'Hover over a country');
