@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+   crossorigin=""/>
+   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+   crossorigin=""></script>
+
+        <style>
+            #map { position: absolute; top:0; bottom: 0; left: 0; right: 0; }
+
+            .info {
+                padding: 6px 8px;
+                font: 14px/16px Arial, Helvetica, sans-serif;
+                background: white;
+                background: rgba(255,255,255,0.8);
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);
+                border-radius: 5px;
+            }
+            .info h4 {
+                margin: 0 0 5px;
+                color: #777;
+            }
+
+            .legend {
+                line-height: 18px;
+                color: #555;
+                
+            }
+            .legend i {
+                width: 18px;
+                height: 18px;
+                float: left;
+                margin-right: 8px;
+                opacity: 0.7;
+                
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script>
+            let map = L.map('map').setView([0, 0], 2);
+            L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=gFX05mk9hDIatdpgPG7C', {
+                attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                maxZoom: 18,
+                id: 'mapbox/streets-v11',
+                tileSize: 512,
+                zoomOffset: -1,
+            }).addTo(map);
+
+            let geojson
+
+
+            fetch('/api/markers')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function(myJson) {
+                for (i=0; i<myJson.length; i++) {
+                    console.log(myJson[i].popup)
+                    marker = L.marker(myJson[i].coords, {title: myJson[i].title})
+                    marker.addTo(map)
+                    marker.bindPopup(myJson[i].popup + '<br> <button "onclick = "clickMarker(this)">Click for Deeper Analysis</button>');
+                    marker.on('click', clickOnMarker)
+                }
+            })
+
+            function clickOnMarker(marker) {
+                map.panTo(marker.target._latlng)
+            }
+
+            fetch('/api/countries')
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function (myGEOJson) {
+                
+
+
+                geojson = L.geoJSON(myGEOJson, {style: style, onEachFeature: onEachFeature}).addTo(map);
+            })
+
+            function getColor(d) {
+                return d > 2500000 ? '#1d0803':
+                       d > 2000000 ? '#4b1508': 
+                       d > 1500000 ? '#79210d': 
+                       d > 1000000 ? '#a82e11': 
+                       d > 500000 ? '#d63a16': 
+                       d > 100000 ? '#ea5735': 
+                       d > 10000 ? '#ed7154': 
+                       d > 5000 ? '#ef7d63': 
+                       d > 1000 ? '#f08a72': 
+                                  '#f29782';
+            }
+
+            function style(feature) {
+                if (feature.properties.carbon_dioxide_level) {
+                    return {
+                    fillColor: getColor(feature.properties.carbon_dioxide_level),
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    dashArray: '3',
+                    fillOpacity: .7
+                    }
+                }
+                else {
+                    return {
+                    fillColor: '#808088',
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    dashArray: '3',
+                    fillOpacity: .7
+                    } 
+                }
+                
+            }
+
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeature
+        });
+    }
+
+    function highlightFeature(e) {
+        var layer = e.target;
+
+        layer.setStyle({
+            weight: 5,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 1
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        }
+        info.update(layer.feature.properties);
+    }
+
+    function resetHighlight(e) {
+        geojson.resetStyle(e.target);
+        info.update();
+    }
+
+    function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+    }
+
+    var info = L.control();
+
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div;
+    };
+
+    info.update = function (props) {
+        if (props === undefined){
+            this._div.innerHTML = '<h4>Gloal Carbon Dioxide Emissions</h4>' +  'Hover over a country';
+        }
+        else if (props.carbon_dioxide_level  === undefined) {
+            this._div.innerHTML = '<h4>Gloal Carbon Dioxide Emissions</h4>' +  (props ?
+            '<b>' + props.ADMIN + '</b><br />'+ 'No data provided for this country'
+            : 'Hover over a country');
+        }
+        
+        else {
+            this._div.innerHTML = '<h4>Gloal Carbon Dioxide Emissions</h4>' +  (props ?
+            '<b>' + props.ADMIN + '</b><br />' + props.carbon_dioxide_level + ' thousands of metric tons'
+            : 'Hover over a country');
+        }
+            
+        
+    };
+
+    info.addTo(map);
+
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [0, 1000, 5000, 10000, 100000, 500000, 1000000, 1500000, 2000000, 2500000],
+        labels = [];
+
+    div.innerHTML += '<h4>Color Key:</h4> <i style="background: #808088"></i>' + 'No data provided <br>'
+
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }
+    
+    return div;
+};
+
+legend.addTo(map);
+
+        </script>
+    </body>
+</html>
