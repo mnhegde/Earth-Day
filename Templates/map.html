@@ -65,13 +65,13 @@
                 z-index: 400;
                 padding: 1em;
                 background: white;
-                height: 200px;
+                height: 240px;
                 width: 400px;
             }
 
             #button-pane1 {
                 position: absolute;
-                bottom: 670px;
+                bottom: 710px;
                 left: 30px;
                 z-index: 410;
             }
@@ -83,6 +83,7 @@
   transform: translate(-50%, -50%);
   cursor: pointer;
   background: white;
+  opacity: .5;
   border-radius: 50%;
   border: none;
   outline: none;
@@ -226,6 +227,7 @@
   transform: translate(-50%, -50%);
   cursor: pointer;
   background: white;
+  opacity: .5;
   border-radius: 50%;
   border: none;
   outline: none;
@@ -355,6 +357,8 @@
   }
 }
 
+
+
         </style>
     </head>
     <body>
@@ -385,6 +389,8 @@
                 tileSize: 512,
                 zoomOffset: -1,
             }).addTo(map);
+
+            map.zoomControl.setPosition('topright');
 
             let geojson_carbon
             let markers = []
@@ -517,7 +523,7 @@
 
     info.update = function (props) {
         if (props === undefined){
-            this._div.innerHTML = '<h4>Global Carbon Dioxide Emissions</h4>' +  'Hover over a country';
+            this._div.innerHTML = '<h4>Global Carbon Dioxide Emissions (2014)</h4>' +  'Hover over a country';
         }
         else if (props.carbon_dioxide_level === undefined) {
             this._div.innerHTML = '<h4>Global Carbon Dioxide Emissions</h4>' +  (props ?
