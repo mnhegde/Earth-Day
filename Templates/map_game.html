@@ -1,54 +1,109 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-   crossorigin=""/>
-   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-   crossorigin=""></script>
 
-        <style>
-            #map { position: absolute; top:0; bottom: 0; left: 0; right: 0; }
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+        crossorigin=""></script>
 
-            .score {
-                padding: 6px 8px;
-                font: 14px/16px Arial, Helvetica, sans-serif;
-                background: white;
-                background: rgba(255,255,255,0.8);
-                box-shadow: 0 0 15px rgba(0,0,0,0.2);
-                border-radius: 5px;
+    <style>
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .score {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .score h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        let running = true;
+
+        let minutes = 0;
+        let hours = 0;
+        let days = 1;
+        let months = 0;
+
+        let monthNames = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September",
+            "October", "November", "December"
+        ];
+        let monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+
+
+        let map = L.map('map').setView([0, 0], 2);
+        L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=gFX05mk9hDIatdpgPG7C', {
+            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+            maxZoom: 18,
+            tileSize: 512,
+            zoomOffset: -1,
+        }).addTo(map);
+
+
+        let score = L.control({
+            position: 'topright'
+        })
+        let timer = L.control({
+            position: 'topleft'
+        })
+        score.onAdd = function (map) {
+            let div = L.DomUtil.create('div', 'score')
+
+            div.innerHTML += '<h4>Oxygen Level:</h4> <p>90%</p>'
+
+            return div;
+        }
+        timer.onAdd = function (map) {
+            let _div = L.DomUtil.create('div', 'score')
+            this.update();
+            return this._div;
+        }
+        timer.update = function () {
+            function clock() {
+
+
+                minutes++;
+                if (minutes === 60) {
+                    hours++;
+                    minutes = 0;
+
+                    if (hours === 24) {
+                        days++;
+                        hours = 0;
+                        if (days === monthDays[months] + 1) {
+                            months++;
+                            days = 1;
+                        }
+
+                    }
+                }
+                this._div.innerHTML = monthNames[months] + " " + days + " " + hours + ":" + minutes;
             }
-            .score h4 {
-                margin: 0 0 5px;
-                color: #777;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="map"></div>
-        <script>
-            let map = L.map('map').setView([0, 0], 2);
-            L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=gFX05mk9hDIatdpgPG7C', {
-                attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-                maxZoom: 18,
-                tileSize: 512,
-                zoomOffset: -1,
-            }).addTo(map);
+            setInterval(clock,250)
+        }
+        score.addTo(map)
+        timer.addTo(map)
+    </script>
+</body>
 
-
-            let score = L.control({position: 'topright'})
-
-            score.onAdd = function (map) {
-                let div = L.DomUtil.create('div', 'score')
-                
-                div.innerHTML += '<h4>Oxygen Level:</h4> <p>90%</p>'
-
-                return div;
-            }
-
-            score.addTo(map)
-            
-        </script>
-    </body>
 </html>
