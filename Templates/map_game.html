@@ -74,15 +74,21 @@
             return div;
         }
         timer.onAdd = function (map) {
-            let _div = L.DomUtil.create('div', 'score')
-            this.update();
+            this._div = L.DomUtil.create('div', 'score')
+            this._div.innerHTML = 'January 1 0:1';
             return this._div;
+            
         }
-        timer.update = function () {
-            function clock() {
+                
 
+    score.addTo(map)
+    timer.addTo(map)
+    
 
-                minutes++;
+    function tick() {
+        setInterval(function() {
+            
+            minutes++;
                 if (minutes === 60) {
                     hours++;
                     minutes = 0;
@@ -97,12 +103,15 @@
 
                     }
                 }
-                this._div.innerHTML = monthNames[months] + " " + days + " " + hours + ":" + minutes;
-            }
-            setInterval(clock,250)
-        }
-        score.addTo(map)
-        timer.addTo(map)
+
+                
+                timer._div.innerHTML = monthNames[months] + " " + days + " " + hours + ":" + minutes;
+        }, 1000)
+    }
+
+    tick()
+
+        
     </script>
 </body>
 

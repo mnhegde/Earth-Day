@@ -45,6 +45,10 @@ def graph():
 def test():
     return render_template('map(testing doc).html')
 
+@app.route('/game')
+def game():
+    return render_template('map_game.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=9000)
