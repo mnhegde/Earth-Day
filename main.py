@@ -36,10 +36,6 @@ def global_carbon():
                 i += 1
     return json.dumps(global_carbon)
 
-@app.route('/graph')
-def graph():
-    return render_template('graph.html')
-
 
 @app.route('/test')
 def test():
