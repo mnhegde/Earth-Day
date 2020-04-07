@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
         integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
         crossorigin=""></script>
-
+   
     <style>
         #map {
             position: absolute;
@@ -18,24 +18,119 @@
             right: 0;
         }
 
-        .score {
+       
+       .eventButton{
+            position: absolute;
+            bottom: 0;
+            z-index: 410;
+            cursor: pointer;
+            width: 5%;
+            height: 15%;
+            border: 1px solid #777;
+            justify-content: center;
+            align-items: center;
+            display: flex;
             padding: 6px 8px;
             font: 14px/16px Arial, Helvetica, sans-serif;
             background: white;
             background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
-        }
-
-        .score h4 {
-            margin: 0 0 5px;
+            transition: 500ms, ease-in;
+            
+       }
+       .eventText
+       {
+        margin: 0 0 5px;
             color: #777;
+            
+       }
+       .eventButton:hover, .eventText:hover
+       {
+           color:black;
+           border: 1px solid black;
+           transition: 500ms, ease-in;
+           padding: 8px 10px;
+       }
+       .onScreenObj
+       {
+        font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            color:black;
+           border: 1px solid black;
+           font-weight: bold;
+       }
+     
+
+        .hide {
+            width: 0px;
+            height: 0px;
+            overflow: hidden;
+
+            }
+        .menu
+        {
+            position: absolute;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            color:black;
+           border: 1px solid black;
+           font-weight: bold;
+           z-index: 410;
+           height: 30px;
+           width: 150px;
+           font-size:20px;
+           display: flex; 
+           align-items: center;
+           bottom:93%;
+        }
+        .wholeScreen
+        {
+            position: absolute;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            color:black;
+           border: 1px solid black;
+           font-weight: bold;
+           z-index: 410;
+           height: fit-content;
+           width: 100%;    
+           font-size:20px;
+           display: flex; 
+           align-items: center;
         }
     </style>
 </head>
 
 <body>
     <div id="map"></div>
+    <div id="event1"class='leaflet-bar eventText eventButton' style="left: 50%;">
+      <h4 >Event 1</h4>
+    </div>
+    <div id="event1"class='leaflet-bar eventText eventButton' style="left: 43%;">
+      <h4 >Event 2</h4>
+      </div>
+      <div id="event1"class='leaflet-bar eventText eventButton' style="left: 57%;">
+       <h4 >Event 3</h4>
+      </div>
+     <div id="infoMenu" class='leaflet-bar menu' style="right: 5px;">
+        Informartion
+     </div>
+     <div id="infoMenu" class='leaflet-bar wholeScreen'>
+        Current event and stats that will scroll across the screen
+     </div>
     <script>
         let running = true;
 
@@ -50,6 +145,7 @@
         let monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 
+        
 
         let map = L.map('map').setView([0, 0], 2);
         L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=gFX05mk9hDIatdpgPG7C', {
@@ -60,28 +156,21 @@
         }).addTo(map);
 
 
-        let score = L.control({
-            position: 'topright'
-        })
+    
         let timer = L.control({
             position: 'topleft'
         })
-        score.onAdd = function (map) {
-            let div = L.DomUtil.create('div', 'score')
-
-            div.innerHTML += '<h4>Oxygen Level:</h4> <p>90%</p>'
-
-            return div;
-        }
+         
+       
         timer.onAdd = function (map) {
-            this._div = L.DomUtil.create('div', 'score')
+            this._div = L.DomUtil.create('div','onScreenObj')
             this._div.innerHTML = 'January 1 0:1';
             return this._div;
             
         }
                 
 
-    score.addTo(map)
+   
     timer.addTo(map)
     
 
@@ -106,7 +195,7 @@
 
                 
                 timer._div.innerHTML = monthNames[months] + " " + days + " " + hours + ":" + minutes;
-        }, 1000)
+        }, 1)
     }
 
     tick()

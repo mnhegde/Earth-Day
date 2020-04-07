@@ -1,5 +1,4 @@
-import jstimers
-from time import sleep
+import threading
 oxygenLevel = 80
 randEventsList = []
 playerEventsList = []
