@@ -1,1 +1,10 @@
-[{"coords": ["-2.163106", "-55.126648"], "title": "Amazon Forest Fire. Click for More Info", "popup": "Amazon Forest Fire. location: Amazon, brazil..."}, {"coords": ["37.404472", "140.983333"], "title": "Fukushima Nuclear Plant. Click for more Info", "popup": "Fukushima Nuclear Plant. location: ..."}, {"coords": ["25.681137", "-89.890137"], "title": "Deepwater Horizon. Click for More Info", "popup": "Deepwater Horizon. location: Gulf of Mexico"}, {"coords": ["51.272222", "30.224167"], "title": "Chernobyl Disaster. Click for More Info", "popup": "Chernobyl Disaster. Location: Chernobyl, Ukraine"}]
+[
+    {"coords": [-2.163106, -55.126648], "title": "Amazon Forest Fire. Click for More Info", "popup": "<b>Event: Amazon Forest Fire. <br> Location: Amazon, Brazil <br> Date: 2019</b>", "description": 
+        "<h3 style='color: gray;'>Hello</h3>"}, 
+    {"coords": [37.404472, 140.983333], "title": "Fukushima Nuclear Plant. Click for more Info", "popup": "<b>Event: Fukushima Nuclear Plant. <br> Location: Okuma, Fukushima, Japan <br> Date: March 11, 2011</b>", "description": 
+        "<h3 style='color: gray;'>Hello</h3>"}, 
+    {"coords": [25.681137, -89.890137], "title": "Deepwater Horizon. Click for More Info", "popup": "<b>Event: Deepwater Horizon. <br> Location: Gulf of Mexico <br> Date: April 20, 2010</b>", "description": 
+        "<h3 style='color: gray;'>Hello</h3>"}, 
+    {"coords": [51.272222, 30.224167], "title": "Chernobyl Disaster. Click for More Info", "popup": "<b>Event: Chernobyl Disaster. <br> Location: Chernobyl, Ukraine <br> Date: April 26, 1986</b>", "description": 
+        "<h3 style='color: gray;'>Hello</h3>"}
+]

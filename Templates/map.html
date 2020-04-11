@@ -67,6 +67,7 @@
                 background: white;
                 height: 240px;
                 width: 400px;
+                overflow: auto;
             }
 
             #button-pane1 {
@@ -368,7 +369,7 @@
             </button>
         </div>
         <div id='marker-pane' class='leaflet-bar'>
-            <h3 style= 'color: gray; padding: 0px;'>Carbon Dixoide Map!</h4>
+            <h3 style= 'color: gray; padding: 0px;'>Carbon Dixoide Map!</h3>
                 <p> This map shows different variables that directly impact climate change on Earth</p>
         </div>
         <div id="button-pane2" class='leaflet-bar'>
@@ -376,7 +377,7 @@
             </button>
         </div>
         <div id="info-pane" class="leaflet-bar chart-container">
-            <h4 style='color: gray; padding: 0;'>Global Atmospheric Carbon Dioxide Levels Since 1958</h4>
+            <h4 style='color: gray; padding: 0;'>Tracking of Factors Affecting Climate Change Since 1958</h4>
             
             <canvas id="myChart" width="375" height="325"></canvas>
         </div>
@@ -407,7 +408,7 @@
                     console.log(myJson[i].popup)
                     marker = L.marker(myJson[i].coords, {title: myJson[i].title})
                     //marker.addTo(map)
-                    marker.bindPopup(myJson[i].popup + '<br> <button onclick = "markerInfo(this)">Click for Deeper Analysis</button>');
+                    marker.bindPopup(myJson[i].popup + '<br> <button onclick = "markerInfo()">Click for Deeper Analysis</button>');
                     marker.on('click', clickOnMarker)
                     markers.push(marker)
                 }
@@ -421,14 +422,29 @@
                 currentmarker = marker.target
             }
 
-            function markerInfo(marker) {
+            function markerInfo() {
                 map.setZoom(10)
                 map.removeLayer(geojson_carbon)
+                let markerInfo = document.getElementById('marker-pane');
                 console.log(currentmarker)
+                fetch('/api/markerinfo', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(currentmarker._latlng)
+                }) 
+                .then (function (response) {
+                  return response.json();
+                })
+                .then (function (myJSON) {
+                  markerInfo.innerHTML = myJSON
+                }); 
+                
             }
 
 
-            fetch('/api/countries')
+            fetch('/api/carboncountries')
             .then(function(response) {
                 return response.json();
             })
@@ -598,20 +614,39 @@ fetch('/api/global_carbon')
                 return response.json();
             })
             .then(function (myJSON) {
-                years = []
+                carbon_years = []
                 carbon_amounts = []
-                for (year in myJSON) {
-                    years.push(year)
-                    carbon_amounts.push(myJSON[year])
+                forest_data = []
+
+                for (year in myJSON[0]) {
+                    carbon_years.push(year)
+                    carbon_amounts.push(myJSON[0][year])
                 }
+
+                for (item in carbon_years) {
+                  point = {}
+                  if (carbon_years[item] in myJSON[1]) {
+                    point['x'] = carbon_years[item]
+                    point['y'] = myJSON[1][carbon_years[item]]
+                    forest_data.push(point)
+                  }
+                  else {
+                    forest_data.push(point)
+                  }
+                  
+                }
+
+
+                
                 let chart = document.getElementById('myChart').getContext('2d');
                 Chart.defaults.global.responsive = false
                 let linechart = new Chart(chart, {
                     type: 'line',
                     data: {
-                        labels: years,
+                        labels: carbon_years,
                         datasets: [
-                            {   label: 'Atmospheric Carbon Dioxide Level (ppm)',
+                            {   label: 'Atmospheric Carbon Dioxide Level (Parts per Million - ppm)',
+                                yAxisID: 'Carbon Dioxide',
                                 backgroundColor: 'rgba(44, 130, 201, 1)',
                                 borderColor: 'rgba(44, 130, 201, 1)',
                                 fill: false,
@@ -624,33 +659,51 @@ fetch('/api/global_carbon')
                                 pointBorderWidth: 1,
                                 pointHoverRadius: 5,
                                 pointHoverBackgroundColor: 'rgba(44, 130, 201, 1)',
-                                pointHoverBorderColor: 'rgba(220, 220, 220, 1',
+                                pointHoverBorderColor: 'rgba(220, 220, 220, 1)',
                                 pointRadius: 2,
                                 pointHitRadius: 10,
                                 data: carbon_amounts
+                            }, 
+
+                            {   label: 'Forest Loss (Hectares - ha)',
+                                yAxisID: 'Forest Loss',
+                                backgroundColor: 'rgba(11, 156, 49, 1)',
+                                borderColor: 'rgba(11, 156, 49, 1)',
+                                fill: false,
+                                lineTension: .1,
+                                borderCapStyle: 'butt',
+                                borderDash: [],
+                                borderJoinStyle: 'miter',
+                                pointBorderColor: 'rgba(11, 156, 49, 1)',
+                                pointBackgroundColor: '#fff',
+                                pointBorderWidth: 1,
+                                pointHoverRadius: 5,
+                                pointHoverBackgroundColor: 'rgba(11, 156, 49, 1)',
+                                pointHoverBorderColor: 'rgba(220, 220, 220, 1)',
+                                pointRadius: 2,
+                                pointHitRadius: 10,
+                                data: forest_data
+
+
                             }
                         ]
                     },
                     options: {
-                        scales: {
-                            yAxes: {
-                                scaleLabel: {
-                                    display: true,
-                                    labelString: 'Atmospheric Carbon Dioxide Level (ppm)'
-                                }
-                            },
-
-                            xAxes: {
-                                scaleLabel: {
-                                    display: true,
-                                    labelString: 'Years'
-                                }
-                            }
-                        },
+                      scales: {
+                        yAxes: [{
+                          id: 'Carbon Dioxide',
+                          type: 'linear',
+                          position: 'left'
+                        }, {
+                          id: 'Forest Loss',
+                          type:'linear',
+                          position: 'right'
+                        }],
+                      },
                         legend: {
                             display: true,
                             position: 'bottom'
-                        }
+                        },
                     }
 
                 })
