@@ -1,5 +1,5 @@
 #Created by Manu Hegde on April 2020
-
+from game import genEvent
 from flask import Flask, render_template, request
 import csv, json
 
@@ -16,6 +16,10 @@ def test():
 @app.route('/game')
 def game():
     return render_template('map_game.html')
+@app.route('/api/game')
+def gameInfo():
+    with open('data/game.json','r') as read_file:
+        return read_file.read()
 
 @app.route('/api/markers')
 def markers():

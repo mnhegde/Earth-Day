@@ -8,7 +8,8 @@
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
         integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
         crossorigin=""></script>
-   
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <style>
         #map {
             position: absolute;
@@ -18,8 +19,8 @@
             right: 0;
         }
 
-       
-       .eventButton{
+
+        .eventButton {
             position: absolute;
             bottom: 0;
             z-index: 410;
@@ -31,180 +32,334 @@
             align-items: center;
             display: flex;
             padding: 6px 8px;
-            font: 14px/16px Arial, Helvetica, sans-serif;
+            font: 12px/14px Arial, Helvetica, sans-serif;
             background: white;
             background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             transition: 500ms, ease-in;
-            
-       }
-       .eventText
-       {
-        margin: 0 0 5px;
+
+        }
+
+        .eventText {
+            margin: 0 0 5px;
             color: #777;
-            
-       }
-       .eventButton:hover, .eventText:hover
-       {
-           color:black;
-           border: 1px solid black;
-           transition: 500ms, ease-in;
-           padding: 8px 10px;
-       }
-       .onScreenObj
-       {
-        font: 14px/16px Arial, Helvetica, sans-serif;
+
+        }
+
+        .eventButton:hover,
+        .eventText:hover {
+            color: black;
+            border: 1px solid black;
+            transition: 500ms, ease-in;
+            padding: 8px 10px;
+        }
+
+        .onScreenObj {
+            font: 14px/16px Arial, Helvetica, sans-serif;
             background: white;
             background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             justify-content: center;
             align-items: center;
+            font-size: 20px;
             display: flex;
-            color:black;
-           border: 1px solid black;
-           font-weight: bold;
-           
-       }
-     
+            color: black;
+            border: 1px solid black;
+            font-weight: bold;
+            width: fit-content;
+            height: 22px;
+
+        }
+
 
         .hide {
-            width: 0px;
-            height: 0px;
-            overflow: hidden;
+            width: 0px !important;
+            height: 0px !important;
+            overflow: hidden !important;
 
-            }
-        .menu
-        {
+        }
+
+        .info {
             position: absolute;
             font: 14px/16px Arial, Helvetica, sans-serif;
             background: white;
             background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
-            color:black;
-           border: 1px solid black;
-           font-weight: bold;
-           z-index: 410;
-           height: 30px;
-           width: 150px;
-           font-size:20px;
-           display: flex; 
-           align-items: center;
-           bottom:90%;
+            color: black;
+            border: 1px solid black;
+            font-weight: bold;
+            z-index: 410;
+            width: fit-content;
+            font-size: 20px;
+            display: flex;
+            top: 10%;
+            cursor: pointer;
         }
-        .wholeScreen
-        {
+
+        .wholeScreen {
             position: absolute;
             font: 14px/16px Arial, Helvetica, sans-serif;
             background: white;
             background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            color: black;
+            border: 1px solid black;
+            font-weight: bold;
+            z-index: 410;
+            height: fit-content;
+            width: 99vw;
             border-radius: 5px;
-            color:black;
-           border: 1px solid black;
-           font-weight: bold;
-           z-index: 410;
-           height: fit-content;
-           width: 100%;    
-           font-size:20px;
-           display: flex; 
-           align-items: center;
+            font-size: 20px;
+            align-items: center;
         }
-        
+
+        .leaflet-top {
+            top: 10%;
+            transform: translate(0%, 10%);
+        }
+
+        .leaflet-left {
+            right: 1%;
+
+        }
     </style>
 </head>
 
 <body>
     <div id="map"></div>
-    <div id="event1"class='leaflet-bar eventText eventButton' style="left: 50%;">
-      <h4 >Event 1</h4>
+    <div id="event1" class='leaflet-bar eventText eventButton' style="left: 50%;">
+        <h4 id='e1h4'>Event 1 3s</h4>
     </div>
-    <div id="event1"class='leaflet-bar eventText eventButton' style="left: 43%;">
-      <h4 >Event 2</h4>
-      </div>
-      <div id="event1"class='leaflet-bar eventText eventButton' style="left: 57%;">
-       <h4 >Event 3</h4>
-      </div>
-     <div id="infoMenu" class='leaflet-bar menu' style="right: 5px;">
-        Informartion
-     </div>
-     <div id="infoMenu" class='leaflet-bar wholeScreen'>
-        Current event and stats that will scroll across the screen
-     </div>
-    <script>
-        let running = true;
+    <div id="event2" class='leaflet-bar eventText eventButton' style="left: 43%;">
+        <h4 id='e2h4'>Event 2 5s</h4>
+    </div>
+    <div id="event3" class='leaflet-bar eventText eventButton' style="left: 57%;">
+        <h4 id='e3h4'>Event 3 7s</h4>
+    </div>
+    <div id="event4" class='leaflet-bar eventText eventButton' style="left: 64%;">
+        <h4 id='e4h4'>Event 4 9s</h4>
+    </div>
+    <div id="event5" class='leaflet-bar eventText eventButton' style="left: 36%;">
+        <h4 id='e5h4'>Event 5 11s</h4>
+    </div>
 
-        let minutes = 0;
-        let hours = 0;
-        let days = 1;
-        let months = 0;
+    <div id="infoMenu" class='info' style="right: 1%;height: fit-content;">
+        <table>
+            <tr>
+                <th style="text-decoration: underline; float: left;">Info</th>
+                <th style="text-decoration: underline; float: right;">Stats</th>
+            </tr>
+            <tr></tr>
+            <tr>
+                <td style="float: left;">Oxygen:</td>
+                <td style="float: right;" id='o2Level'> %%</td>
+            </tr>
+            <tr>
+                <td style="float: left;">Active Events:&emsp;</td>
+                <td style="float: right;" id='eventList'>event here</td>
+            </tr>
+        </table>
+    </div>
 
-        let monthNames = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September",
-            "October", "November", "December"
-        ];
-        let monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    <div id="infoMenu" class='wholeScreen'>
+        <marquee direction='right'>
+
+        </marquee>
+    </div>
+
+</body>
+<script>
+    let minutes = 0;
+    let hours = 0;
+    let days = 1;
+    let months = 0;
+    let e1ready = false;
+    let e2ready = false;
+    let e3ready = false;
+    let e4ready = false;
+    let e5ready = false;
+    let monthNames = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September",
+        "October", "November", "December"
+    ];
+    let monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+    let map = L.map('map').setView([0, 0], 2);
+    L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=gFX05mk9hDIatdpgPG7C', {
+        attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+        maxZoom: 18,
+        tileSize: 512,
+        zoomOffset: -1,
+        zoomControl: false
+    }).addTo(map);
 
 
-        
 
-        let map = L.map('map').setView([0, 0], 2);
-        L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=gFX05mk9hDIatdpgPG7C', {
-            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-            maxZoom: 18,
-            tileSize: 512,
-            zoomOffset: -1,
-            zoomControl: false
-        }).addTo(map);
+    let timer = L.control({
+        position: 'topleft'
+    })
+    map.zoomControl.remove();
+    L.control.zoom({
+        position: 'bottomleft'
+    }).addTo(map)
+
+    timer.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'onScreenObj')
+        this._div.innerHTML = 'January 1 0:1';
+        return this._div;
+
+    }
 
 
-    
-        let timer = L.control({
-            position: 'topleft'
-        })
-        map.zoomControl.remove();
-       L.control.zoom({position:'bottomleft'}).addTo(map)
-       
-        timer.onAdd = function (map) {
-            this._div = L.DomUtil.create('div','onScreenObj')
-            this._div.innerHTML = 'January 1 0:1';
-            return this._div;
-            
-        }
-                
 
-   
     timer.addTo(map)
-  
+
+    function Cool1()
+
+    {
+        let num = 3;
+
+
+        setInterval(function () {
+
+            num--;
+
+            if (num < 0) {
+                document.getElementById('e1h4').innerHTML = " "
+                num = ' is ready!'
+                document.getElementById('e1h4').innerHTML += 'Event 1 ' + num
+                e1ready = true;
+            }
+            if (num > 0) {
+                document.getElementById('e1h4').innerHTML = "Event 1 in " + num + 's';
+                e1ready = false;
+            }
+            return e1ready;
+        }, 1000)
+
+    }
+
+    function Cool2() {
+        let num = 5;
+        setInterval(function () {
+
+            num--;
+
+            if (num < 0) {
+                document.getElementById('e2h4').innerHTML = " "
+                num = ' is ready!'
+                document.getElementById('e2h4').innerHTML += 'Event 2' + num;
+                e2ready = true;
+            }
+            if (num > 0) {
+                document.getElementById('e2h4').innerHTML = "Event 2 in " + num + 's';
+                e2ready = false;
+            }
+            return e2ready;
+        }, 1000)
+
+    }
+
+    function Cool3()
+
+    {
+        let num = 7;
+
+
+        setInterval(function () {
+
+            num--;
+
+            if (num < 0) {
+                document.getElementById('e3h4').innerHTML = " "
+                num = ' is ready!'
+                document.getElementById('e3h4').innerHTML += 'Event 3 ' + num;
+                e3ready = true;
+            }
+            if (num > 0) {
+                document.getElementById('e3h4').innerHTML = "Event 3 in " + num + 's';
+                e2ready = false;
+            }
+            return e3ready;
+        }, 1000)
+    }
+
+    function Cool4()
+
+    {
+        let num = 9;
+
+
+        setInterval(function () {
+
+            num--;
+
+            if (num < 0) {
+                document.getElementById('e4h4').innerHTML = " "
+                num = ' is ready!'
+                document.getElementById('e4h4').innerHTML += 'Event 4 ' + num
+                e4ready = true;
+            }
+            if (num > 0) {
+                document.getElementById('e4h4').innerHTML = "Event 1 " + num + 's';
+                e4ready = false;
+            }
+        }, 1000)
+    }
+
+    function Cool5()
+
+    {
+        let num = 11;
+
+
+        setInterval(function () {
+
+            num--;
+
+            if (num < 0) {
+                document.getElementById('e5h4').innerHTML = " "
+                num = ' is ready!'
+                document.getElementById('e5h4').innerHTML += 'Event 1 ' + num
+            }
+            if (num > 0) {
+                document.getElementById('e5h4').innerHTML = "Event 1 " + num + 's';
+            }
+        }, 1000)
+    }
+
     function tick() {
-        setInterval(function() {
-            
+        setInterval(function () {
+
             minutes++;
-                if (minutes === 60) {
-                    hours++;
-                    minutes = 0;
+            if (minutes === 60) {
+                hours++;
+                minutes = 0;
 
-                    if (hours === 24) {
-                        days++;
-                        hours = 0;
-                        if (days === monthDays[months] + 1) {
-                            months++;
-                            days = 1;
-                        }
-
+                if (hours === 24) {
+                    days++;
+                    hours = 0;
+                    if (days === monthDays[months] + 1) {
+                        months++;
+                        days = 1;
                     }
-                }
 
-                
-                timer._div.innerHTML = monthNames[months] + " " + days + " " + hours + ":" + minutes;
+                }
+            }
+
+
+            timer._div.innerHTML = monthNames[months] + " " + days + " " + hours + ":" + minutes;
         }, 1)
     }
 
     tick()
-
-        
-    </script>
-</body>
+    Cool1()
+    Cool2()
+    Cool3()
+    Cool4()
+    Cool5()
+</script>
 
 </html>
