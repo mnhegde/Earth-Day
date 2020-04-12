@@ -1,7 +1,6 @@
 import csv
 import random
 import json
-oxygenLevel = 75
 name = []
 latitude = []
 longitude = []
