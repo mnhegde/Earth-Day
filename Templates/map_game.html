@@ -125,10 +125,33 @@
             right: 1%;
 
         }
+
+        .start {
+            position: absolute;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            color: black;
+            border: 1px solid black;
+            font-weight: bold;
+            z-index: 410;
+            height: 290px;
+            width: 690px;
+            border-radius: 5px;
+            font-size: 20px;
+            align-items: center;
+            bottom: 50%;
+            left: 50%;
+            text-align: center;
+            margin: -145px 0 0 -345px;
+
+        }
     </style>
 </head>
 
 <body>
+
     <div id="map"></div>
     <div id="event1" class='leaflet-bar eventText eventButton' style="left: 50%;">
         <h4 id='e1h4'>Event 1 3s</h4>
@@ -163,15 +186,28 @@
             </tr>
         </table>
     </div>
-
     <div id="infoMenu" class='wholeScreen'>
         <marquee direction='right'>
 
         </marquee>
     </div>
 
+    <div class="start" id='startScreen'>
+        <h1>Map Game!</h1>
+        <h4>By, Spencer Evans-Cole</h4>
+        <p style="line-height: 1.3;">The goal of this game is to have the oxygen level be above 80% by the end of the
+            year. To do this there are 5 events you can use at the bottom of the screen to prevent disasters. Disaster
+            periodicly happen and will ramp up over time. Good luck!</p>
+        <button
+            style="padding: 8px 20px; background-color: transparent; border: 2px solid black; font-size: 20px; font-weight: bold; border-radius: 5px;cursor: pointer;"
+            onclick="start()">
+            Play!</button>
+    </div>
+
+
 </body>
 <script>
+    var running = false;
     let minutes = 0;
     let hours = 0;
     let days = 1;
@@ -185,7 +221,7 @@
         "October", "November", "December"
     ];
     let monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
+    let oxygenLevel = 75;
     let map = L.map('map').setView([0, 0], 2);
     L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=gFX05mk9hDIatdpgPG7C', {
         attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
@@ -194,9 +230,6 @@
         zoomOffset: -1,
         zoomControl: false
     }).addTo(map);
-
-
-
     let timer = L.control({
         position: 'topleft'
     })
@@ -215,10 +248,25 @@
 
 
     timer.addTo(map)
-
-    function Cool1()
-
-    {
+    function start() {
+        $('#startScreen').fadeOut('slow', function () {
+            running = true;
+            console.log(running);
+            tick()
+            Cool1()
+            Cool2()
+            Cool3()
+            Cool4()
+            Cool5()
+            oLevel()
+        })
+    }
+    function oLevel() {
+        setInterval(function () {
+            document.getElementById('o2Level').innerHTML = oxygenLevel + '%'
+        }, 100)
+    }
+    function Cool1() {
         let num = 3;
 
 
@@ -262,9 +310,7 @@
 
     }
 
-    function Cool3()
-
-    {
+    function Cool3() {
         let num = 7;
 
 
@@ -286,9 +332,7 @@
         }, 1000)
     }
 
-    function Cool4()
-
-    {
+    function Cool4() {
         let num = 9;
 
 
@@ -309,9 +353,7 @@
         }, 1000)
     }
 
-    function Cool5()
-
-    {
+    function Cool5() {
         let num = 11;
 
 
@@ -354,12 +396,6 @@
         }, 1)
     }
 
-    tick()
-    Cool1()
-    Cool2()
-    Cool3()
-    Cool4()
-    Cool5()
 </script>
 
 </html>
