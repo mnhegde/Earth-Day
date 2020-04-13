@@ -3,6 +3,11 @@
 <!DOCTYPE html>
 <html>
     <head>
+
+      <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
         
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
@@ -13,6 +18,8 @@
 
    <link rel="stylesheet" href='https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.css'/>
         <script src='https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.js'></script>
+  <script src='/static/leaflet-search.js'></script>
+  <link rel='stylesheet' href='/static/leaflet-search.css'>
 
         <style>
             #map { position: absolute; top:0; bottom: 0; left: 0; right: 0; }
@@ -359,6 +366,16 @@
 }
 
 
+.legend span, .legend label {
+  display: block;
+  width: 50px;
+  height: 28px;
+  float: left;
+  opacity: 0.7;
+  text-align: center;
+  font-size: 60%
+}
+
 
         </style>
     </head>
@@ -407,7 +424,6 @@
             })
             .then(function(myJson) {
                 for (i=0; i<myJson.length; i++) {
-                    console.log(myJson[i].popup)
                     marker = L.marker(myJson[i].coords, {title: myJson[i].title})
                     //marker.addTo(map)
                     marker.bindPopup(myJson[i].popup + '<br> <button onclick = "markerInfo()">Click for Deeper Analysis</button>');
@@ -426,9 +442,8 @@
 
             function markerInfo() {
                 map.setZoom(10)
-                map.removeLayer(geojson_carbon)
+                $('.leaflet-control-layers-selector')[2].click()
                 let markerInfo = document.getElementById('marker-pane');
-                console.log(currentmarker)
                 fetch('/api/markerinfo', {
                   method: 'POST',
                   headers: {
@@ -468,6 +483,7 @@
               
               switchLayers(geojson_carbon, geojson_forest)
               addControls()
+              createSearch(geojson_carbon)
             })
 
             
@@ -502,8 +518,6 @@
               }
                 
             }
-
-            console.log(geojson_carbon)
 
             function style(feature) {
                 if (feature.properties.carbon_dioxide_level) {
@@ -548,6 +562,7 @@
     }
 
     function highlightFeature(e) {
+      console.log(e)
         var layer = e.target;
 
         layer.setStyle({
@@ -627,12 +642,18 @@ legend.onAdd = function (map) {
         grades = [0, 1000, 5000, 10000, 100000, 500000, 1000000, 1500000, 2000000, 2500000],
         labels = [];
 
-    div.innerHTML += '<h4>Color Key:</h4> <i style="background: #808088"></i>' + 'No data provided <br>'
+    div.innerHTML += '<h4>Color Key:</h4> <i style="background: #808088"></i>' + 'No data provided <br> <br>'
 
-    for (var i = 0; i < grades.length; i++) {
+    for (i = 0; i < grades.length; i++) {
         div.innerHTML +=
-            '<i style="background:' + getColor(grades[i] + 1, data_type) + '"></i> ' +
-            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+            '<span style="background:' + getColor(grades[i] + 1, data_type) + '"></span> ';
+    }
+    div.innerHTML += '<br>';
+
+// second loop for text
+    for (i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<label>' + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] : '+') + '</label>';
     }
     
     return div;
@@ -790,18 +811,6 @@ fetch('/api/global_carbon')
                 })
             })
 
-        function closeOrShowGraph() {
-            graphContainer = document.getElementById('info-pane')
-            button = document.getElementById('button-pane');
-            if (graphContainer.style.display == 'none') {
-                graphContainer.style.display = 'initial';
-                button.innerHTML = '<<'
-            }
-            else {
-                graphContainer.style.display = 'none';
-                button.innerHTML = '>>'
-            }
-        }
 
         let i = document.getElementById('btn1');
         i.classList.add("on")
@@ -834,7 +843,37 @@ fetch('/api/global_carbon')
         
         });
 
-        
+
+        function createSearch(currentlayer) {
+          console.log(currentlayer)
+          let searchControl = new L.Control.Search({
+          layer: currentlayer,
+          propertyName: 'ADMIN',
+          marker: false,
+          moveToLocation: function(latlng, title, map) {
+
+            let zoom = map.getBoundsZoom(latlng.layer.getBounds());
+            map.setView(latlng, zoom);
+            console.log(latlng + title + map)
+          }
+        });
+
+        searchControl.on('search:locationfound', function(e) {
+          e.layer.setStyle({weight: 10,
+            color: '#FFFFFF',
+            dashArray: '',
+            fillOpacity: 1})
+          
+        }).on('search:collapsed', function(e) {
+          currentlayer.eachLayer(function(layer) {
+            currentlayer.resetStyle(layer);
+          })
+        })
+
+        searchControl.addTo(map);
+      }
+       
+
 
         </script>
     </body>
