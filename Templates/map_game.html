@@ -311,8 +311,11 @@
         fetch('/api/game')
         .then(response => response.json())
         .then(myJson =>{
-            let m = JSON.stringify(myJson)
-            console.log(m);
+            
+            let picker = Math.floor(Math.random()*50)
+
+            currentEvent = document.getElementById('currentEvent')
+            currentEvent.innerHTML = 'The event is ' + myJson[picker]['event']
         })
     }
     function oLevel() {
