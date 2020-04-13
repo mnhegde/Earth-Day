@@ -311,21 +311,9 @@
         fetch('/api/game')
         .then(response => response.json())
         .then(myJson =>{
-            for(let i = 0; i <myJson.length; i++)
-            {
-                posibleEvents.push(myJson[i].event);
-                posibleDot.push(myJson[i].damage);
-                posibleCountries.push(myJson[i].country);
-                posibleHealth.push(myJson[i].health);
-                posibleCords.push(myJson[i].coord);
-
-            }
-
+            let m = JSON.stringify(myJson)
+            console.log(m);
         })
-        console.log(posibleEvents);
-        let picker = Math.floor(Math.random()*50);
-      
-        document.getElementById('currentEvent').innerHTML='The event is '+posibleEvents[0]+' in '+posibleCountries[0]+' it is doing ' + posibleDot[0]+' damage and has '+posibleHealth[0]+' health'
     }
     function oLevel() {
         setInterval(function () {
