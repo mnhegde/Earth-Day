@@ -86,7 +86,7 @@ def global_carbon():
 
 @app.route('/api/global_carbon_increase')
 def global_carbon_increase():
-    fp = open(r"C:\Users\root\Documents\Python\Earth_Engine\data\archive.csv", 'r')
+    fp = open(r"data/archive.csv", 'r')
     reader = csv.reader(fp)
     global_carbon_increase = []
     f = 0
