@@ -84,6 +84,32 @@ def global_carbon():
     
     return json.dumps(data)
 
+@app.route('/api/global_carbon_increase')
+def global_carbon_increase():
+    fp = open(r"C:\Users\root\Documents\Python\Earth_Engine\data\archive.csv", 'r')
+    reader = csv.reader(fp)
+    global_carbon_increase = []
+    f = 0
+    date=[]
+    h=False
+    for row in reader:
+        if row[0] == '1960':
+            h=True
+        if h==True:
+            if row[1] == '12':
+                f+=1
+                if f == 1:
+                    date = [row[0],row[3]]
+                elif f == 5:
+                    global_carbon_increase.append({'year':str(date[0])+'-'+str(row[0]),'dif':format(float(row[3])-float(date[1]),'.2f')})
+                    f=0
+    return json.dumps(global_carbon_increase)
+
+@app.route('/chart')
+def chart_page():
+    return render_template('chart.html')
+
+
 @app.route('/api/markerinfo', methods = ['GET', 'POST'])
 def markerInfo():
     if request.method == 'POST':
