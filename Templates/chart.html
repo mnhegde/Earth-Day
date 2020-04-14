@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<style>
+    html {
+  scroll-behavior: smooth;
+}
+.content {
+  max-width: 1000px;
+  margin: auto;
+}
+    .column {
+      float: left;
+      width: 30%;
+    }
+    
+    /* Clearfix (clear floats) */
+    .row::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+    .range-wrap {
+  position: relative;
+  margin: 0 auto 3rem;
+}
+.range {
+  width: 50%;
+}
+.bubble {
+  background: blue;
+  color: white;
+  padding: 4px 12px;
+  position: absolute;
+  border-radius: 4px;
+  left: 50%;
+  transform: translate(-49%,75%);
+}
+.bubble::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: blue;
+  top: -1px;
+  left: 49%;
+}
+
+body {
+  margin: 2rem;
+}
+</style>
+
+<style>
+    /* Popup container - can be anything you want */
+    .popup {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    /* The actual popup */
+    .popup .popuptext {
+      visibility: hidden;
+      width: 160px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -80px;
+    }
+    
+    /* Popup arrow */
+    .popup .popuptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+    
+    /* Toggle this class - hide and show the popup */
+    .popup .show {
+      visibility: visible;
+      -webkit-animation: fadeIn 1s;
+      animation: fadeIn 1s;
+    }
+    
+    /* Add animation (fade in the popup) */
+    @-webkit-keyframes fadeIn {
+      from {opacity: 0;} 
+      to {opacity: 1;}
+    }
+    
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity:1 ;}
+    }
+</style>
+<head><title>Chart HW / TEST AREA</title></head>
+<html lang="en">
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body>
+
+<!-- Header -->
+<header class="w3-display-container w3-content w3-center" style="max-width:1500px">
+  <img class="w3-image" src="https://cdn.pixabay.com/photo/2015/10/30/17/42/world-1014504_960_720.jpg" alt="Me" width="1500" height="600">
+  <div class="w3-display-middle w3-padding-large w3-border w3-wide w3-text-light-grey w3-center">
+    <h1 class="w3-hide-medium w3-hide-small w3-xxxlarge">Atmospheric Carbon Dioxide Simulation</h1>
+    <h5 class="w3-hide-large" style="white-space:nowrap">Atmospheric Carbon Dioxide Simulation</h5>
+    <h3 class="w3-hide-medium w3-hide-small">Juni Hackathon</h3>
+  </div>
+  
+  <!-- Navbar (placed at the bottom of the header image) -->
+  <div class="w3-bar w3-light-grey w3-round w3-display-bottommiddle w3-hide-small" style="bottom:-16px">
+    <a href="#scatter" class="w3-bar-item w3-button">Graphs</a>
+    <a href="#simulation_text" class="w3-bar-item w3-button">Simulation</a>
+    <a href="#how_to_text" class="w3-bar-item w3-button">How To Use</a>
+    <a href="#control" class="w3-bar-item w3-button">Control Panel</a>
+  </div>
+</header>
+
+
+<!-- Page content -->
+<div class="w3-content w3-padding-large w3-margin-top" id="portfolio">
+
+
+<!-- End page content -->
+</div>
+
+</body>
+
+
+
+<body>
+    <div class='row'>
+        <div class='column'>
+            <canvas id="scatter" width="300" height="400"></canvas>
+        </div>
+        <div class='column'>
+            <canvas id='bar' width="920" height="486"></canvas>
+        </div>
+    </div> 
+    <div class="content">   
+
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'></script>
+<script>
+
+fetch('/api/global_carbon')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (myJSON) {
+                years = []
+                carbon_amounts = []
+                for (year in myJSON) {
+                    years.push(year)
+                    carbon_amounts.push(myJSON[year])
+                }
+
+var chart = document.getElementById('scatter').getContext('2d');
+Chart.defaults.global.responsive = false;
+
+var carbon_amounts_pierre = []
+for (let i = 1960; i<=2016; i ++) {
+    var j = {x:i, y:carbon_amounts[i-1958]}
+    carbon_amounts_pierre.push(j)
+}
+carbon_amounts_pierre.push({x:2017,y:406.82});
+carbon_amounts_pierre.push({x:2018,y:408.32});
+carbon_amounts_pierre.push({x:2019,y:411.11});
+
+scatterchart = new Chart(chart, {
+    type: 'scatter',
+    data: {
+        datasets: [{
+            label: 'Atmospheric Carbon Dioxide (ppm)',
+            backgroundColor: ['rgba(44, 130, 201, 1)','#c153d8'],
+            borderColor: 'rgba(44, 130, 201, 1)',
+            fill: false,
+            lineTension: .1,
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderJoinStyle: 'miter',
+            pointBorderColor: 'rgba(44, 130, 201, 1)',
+            pointBorderWidth: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: 'rgba(44, 130, 201, 1)',
+            pointHoverBorderColor: 'rgba(220, 220, 220, 1',
+            pointRadius: 0,
+            pointHitRadius: 10,
+            data: carbon_amounts_pierre,
+            showLine: true,
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: {
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Atmospheric Carbon Dioxide Level (ppm)'
+                }
+            },
+
+            xAxes: [{
+                ticks: {
+                min: 1960,    // minimum will be 0, unless there is a lower value.
+                // OR //
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Years'
+                }
+            }]
+        },
+        legend: {
+            display: true,
+            position: 'bottom'
+        },
+        title: {
+            display: true,
+            text: "Atmospheric CO2 (ppm) Each Year Since 1960"
+        },
+        responsive: true,
+        
+    }
+})
+var next_year = 2020
+            })
+
+   </script>
+   <script>
+fetch('/api/global_carbon_increase')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (myJSON) {
+            year_ranges = []
+            carbon_changes = []
+            for (i in myJSON) {
+                year_ranges.push(myJSON[i]['year'])
+                carbon_changes.push(myJSON[i]['dif'])
+            }
+
+var chart = document.getElementById('bar').getContext('2d');
+Chart.defaults.global.responsive = false;
+year_ranges.push('2015-2019')
+carbon_changes.push(9.22)
+
+barchart = new Chart(chart, {
+    type: 'bar',
+    data: {
+      labels: year_ranges,
+      datasets: [
+        {
+          label: "Atmospheric CO2(ppm) Increase",
+          backgroundColor: ["#083b64","#083b64","#083b64","#083b64","#083b64","#083b64","#083b64","#083b64","#083b64","#083b64","#083b64","#083b64"],
+          data: carbon_changes
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: "Increase in Atmospheric CO2 (ppm) per Demi-Decade"
+      }
+    }
+});
+
+    })
+        var gjf = 1
+        var new_color
+        function addData(chart, label, data, newcolor_val) {
+
+            if (newcolor_val > 8.5) {
+                new_color = '#8B0000'
+            }
+            else if (newcolor_val > 8) {
+                new_color = '#FF0000'
+            }
+            else if (newcolor_val > 7.5) {
+                new_color = '#FF4023'
+            }
+            else if (newcolor_val > 7) {
+                new_color = '#FF5C00'
+            }
+            else if (newcolor_val > 6.5) {
+                new_color = '#FF8106'
+            }
+            else if (newcolor_val > 6) {
+                new_color = '#FF9F00'
+            }
+            else if (newcolor_val > 5.5) {
+                new_color = '#FEC34D'
+            }
+            else if (newcolor_val > 5) {
+                new_color = '#FFFC00'
+            }
+            else if (newcolor_val > 4.5) {
+                new_color = '#9ACD32'
+            }
+            else if (newcolor_val > 4) {
+                new_color = '#15AB00'
+            }
+            else if (newcolor_val > 3) {
+                new_color = '#008000'
+            }
+            else if (newcolor_val > 2) {
+                new_color = '#4cBB17'
+            }
+            else if (newcolor_val > 1) {
+                new_color = '#00A86B'
+            }
+            else {
+                new_color = '#9DC183'
+            }
+            
+            chart.data.labels.push(label);
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.push(data);
+                dataset.backgroundColor.push(new_color)
+            });
+            chart.update();
+        }
+
+        function ScatterAddData(data) {
+            scatterchart.data.datasets.forEach((dataset) => {
+                dataset.data.push(data);
+            });
+            scatterchart.update();
+        }
+
+        function scrollToTop() { 
+            window.scrollTo(0, 400); 
+        }
+
+        function sleep(milliseconds) {
+            const date = Date.now();
+            let currentDate = null;
+            do {
+                currentDate = Date.now();
+            } while (currentDate - date < milliseconds);
+        }
+
+        function isNumberKey(evt){
+            var charCode = (evt.which) ? evt.which : evt.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+            }
+    
+        function theBigFunction (form) { //pretty much the main game function is in here
+            scrollToTop()
+            
+            var acarinc = 9.22
+            var electricity = [form.electricity.value,24.9,acarinc*24.9/100]
+            var industry = [form.industry.value,19,acarinc*19/100]
+            var transportation = [form.transportation.value,14.3,acarinc*14.3/100]
+            var other = [form.other.value,8.6,acarinc*8.6/100]
+            var fugitive = [form.fugitive.value,4,acarinc*4/100]
+            var agriculture = [form.agriculture.value,13.8,acarinc*13.8/100]
+            var deforestation = [form.deforestation.value,11.3,acarinc*11.3/100]
+            var waste = [form.waste.value,3.2,acarinc*3.2/100]
+            var missing = [100,.9,acarinc*.9/100,.9*100/100]
+
+            var sections = [electricity,industry,transportation,other,fugitive,
+                            agriculture,deforestation,waste,missing]
+            
+            var newperc=missing[3]
+            for (let l = 0; l<8; l++) {
+                sections[l][0] = sections[l][0].slice(0,-1)
+                sections[l][0] = 100-sections[l][0]
+                sections[l].push(sections[l][1]*sections[l][0]/100)
+                newperc += sections[l][3]
+            }
+            var newinc = acarinc*newperc/100 // the new increase
+            var sim_years = Number(form.yearbox.value) // the amount of years the increase is taking place
+            if (sim_years<5) {
+                sim_years =5
+            }
+            var inc_differince = acarinc-newinc // the difference the new inc has was with the old
+            var yearly_inc_change = inc_differince/sim_years // the change of inc each year
+
+            var demi_decade_yearly_inc_change = ((yearly_inc_change*(sim_years-(sim_years % 5))))/((sim_years-(sim_years % 5))/5)
+            // demi_decade_yearly_inc_change tracks the demi decade increase while excluding the extra year remainders
+            console.log(sim_years)
+            console.log('yearly inc change =' + yearly_inc_change.toString())
+            console.log('inc differince =' + inc_differince.toString())
+            console.log(demi_decade_yearly_inc_change)
+            console.log((sim_years-(sim_years % 5)))
+            var i = acarinc/5
+            var pre_car = 411.11
+            for (let r = 0; r <= sim_years; r++) {
+                i -= yearly_inc_change/5
+                pre_car += i
+                ScatterAddData({x:2020+r, y:pre_car})
+            }
+
+            if (sim_years+2020 < 2070) {
+                for(let r = 2020+sim_years; r <= 2070; r++) {
+                    pre_car += newinc/5
+                    ScatterAddData({x:r+1, y:pre_car})
+                }
+            }
+
+            var new_text = ''
+            var cur_inc = acarinc
+            var num1
+            var num2
+            for (let g = 0; g <= sim_years; g += 5) {
+                num1 = g+2020
+                num2 = g+4+2020
+                if (g!= sim_years) {
+                    cur_inc -= demi_decade_yearly_inc_change
+                }
+                new_text = (num1.toString() + '-' + num2.toString())
+
+                addData(barchart,new_text,cur_inc,cur_inc)
+            }
+
+            if (sim_years+2020 < 2070) {
+                for ( let g = 2020+sim_years; g<=2070; g+=5) {
+                    num1 = g
+                    num2 = g+4
+                    new_text = (num1.toString() + '-' + num2.toString())
+                    addData(barchart,new_text,newinc,newinc)
+                }
+            }
+            
+
+
+        }
+    </script>
+    
+    <form NAME="myform" ACTION="" METHOD="GET"><h1>Atmoshperic Carbond Dioxide Simulation: </h1><BR> 
+        <p id='simulation_text'><h2>The Simulation</h2><br>
+            This simulation uses data from the Mauna Loa Observatory in Hawaii to present historical climate change
+            data in a measurement call Atmoshpheric Carbon Dioxide (parts per million). The simulation uses data from
+            the World Resource Institute(WRI) to understand what different sectors contribute to our rising Atmospheric CO2.
+            The data also gives specific insights as to how much each sector contributes each year. Using this data the
+            simulation is able to give accurate information regarding our future Atmospheric CO2(ppm). The simulation provides
+            a hypothetical event in which, in the year 2020, the world has decided that it will not further accelerate its 
+            increasing emmisions. The user can control the world's sectors and therefore decrease the increasing emmsions. It
+            is important to note that the user can only control the sectors that increase the carbon dioxide output, like electricity
+            and deforestation, and does not affect sectors that decrease the carbon dioxide output, such as reforestation.
+            The simulation aims to educate people, through visualization, on each sector's effects on the world carbon dioxide 
+            output.
+        </p>
+        <p id='how_to_text'><h2>How To Use The Simulation</h2><br>
+            The user has several sliders they can control. The sliders control the goal percentage decrease of carbon 
+            emmisions in a sector. Meaning, if a user sets deforestation's goal percentage decrease of carbon emmisions to
+            90%, then the carbon dioxide output of deforestation will decrease by 90%. For further information on a sector, a user
+            can press the information button, represented as an 'I'. Also, the user can specify over how many
+            years this change will take place. Once the user presses the "Simulate" button, the simulation will run and the 
+            charts will show the impacts the user made on the atmoshperes carbon dioxide levels. The data will extend
+            to the year 2070 if the time specified does not reach then. A good Atmospheric C02(ppm) Increase is in the green level and a global reading below 475. Afterwards, go to the 
+            <a href="https://www.wri.org/blog/2020/02/greenhouse-gas-emissions-by-country-sector">World Resource Institute's page on Greenhouse Gas Emissions by Sector</a>
+            to get charts that give specific percentages on each sectors emmisions.
+        </p>
+    
+        <p id = 'control'></p>
+       
+
+    Electricity & Heat:
+    <div class="popup" onclick="myFunction('myPopup1')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/1200px-Information_icon.svg.png" alt="info" style="width:20px;height:20px;">
+        <span class="popuptext" id="myPopup1">Residential and commercial heating and power</span>
+      </div>
+    <div class="range-wrap">
+        <input type="range" class="range">
+        <output class="bubble" name = 'electricity'></output>
+      </div>
+
+    Industrial Processes and Energy Use:
+    <div class="popup" onclick="myFunction('myPopup2')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/1200px-Information_icon.svg.png" alt="info" style="width:20px;height:20px;">
+        <span class="popuptext" id="myPopup2">Pulp,paper,printing, machinery production,food and tobaco industries, chemical production, cement production</span>
+      </div>
+    <div class="range-wrap">
+        <input type="range" class="range">
+        <output class="bubble" name = 'industry' min="0" max="100" value="100" step="1"></output>
+    </div>
+
+    Transportation:
+    <div class="popup" onclick="myFunction('myPopup3')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/1200px-Information_icon.svg.png" alt="info" style="width:20px;height:20px;">
+        <span class="popuptext" id="myPopup3">Road transport, air transport, and shipping transport</span>
+      </div>
+    <div class="range-wrap">
+        <input type="range" class="range">
+        <output class="bubble" name = 'transportation' min="0" max="100" value="100" step="1"></output>
+    </div>
+    
+    Other Fuel Combustion:
+    <div class="popup" onclick="myFunction('myPopup4')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/1200px-Information_icon.svg.png" alt="info" style="width:20px;height:20px;">
+        <span class="popuptext" id="myPopup4">Unallocated Fuel Combustion</span>
+      </div>
+    <div class="range-wrap">
+        <input type="range" class="range">
+        <output class="bubble" name = 'other' min="0" max="100" value="100" step="1"></output>
+    </div>
+
+    Fugitive Emissions:
+    <div class="popup" onclick="myFunction('myPopup5')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/1200px-Information_icon.svg.png" alt="info" style="width:20px;height:20px;">
+        <span class="popuptext" id="myPopup5">Fugitive emissions are emissions of gases or vapors from pressurized equipment due to leaks and other unintended or irregular releases of gases, mostly from industrial activities.</span>
+      </div>
+    <div class="range-wrap">
+        <input type="range" class="range">
+        <output class="bubble" name = 'fugitive' min="0" max="100" value="100"></output>
+    </div>
+
+    Agriculture:
+    <div class="popup" onclick="myFunction('myPopup6')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/1200px-Information_icon.svg.png" alt="info" style="width:20px;height:20px;">
+        <span class="popuptext" id="myPopup6">Harvest, land management, agricultural energy use, agricultural soils, livestock, manure, and rice cultivation </span>
+      </div>
+    <div class="range-wrap">
+        <input type="range" class="range">
+        <output class="bubble" name = 'agriculture' min="0" max="100" value="100" step="1"></output>
+    </div>
+
+    Deforestation:
+    <div class="popup" onclick="myFunction('myPopup7')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/1200px-Information_icon.svg.png" alt="info" style="width:20px;height:20px;">
+        <span class="popuptext" id="myPopup7">The removement of trees</span>
+      </div>
+    <div class="range-wrap">
+        <input type="range" class="range">
+        <output class="bubble" name = 'deforestation' min="0" max="100" value="100" step="1"></output>
+    </div>
+
+    Waste:
+    <div class="popup" onclick="myFunction('myPopup8')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/1200px-Information_icon.svg.png" alt="info" style="width:20px;height:20px;">
+        <span class="popuptext" id="myPopup8">Landfills, wastewater, and other waste</span>
+      </div>
+    <div class="range-wrap">
+        <input type="range" class="range">
+        <output class="bubble" name = 'waste' min="0" max="100" value="100" step="1"></output>
+    </div>
+    <br>
+    
+    How many years will it take for these changes to be completed?
+    <div class="popup" onclick="myFunction('myPopup9')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/1200px-Information_icon.svg.png" alt="info" style="width:20px;height:20px;">
+        <span class="popuptext" id="myPopup9">(Default and minimum is 5)</span>
+      </div>
+      <br>
+        <INPUT TYPE="text" NAME="yearbox" VALUE="" type="number" onkeypress="return isNumberKey(event)"><br><br>
+    
+    <br>
+    <INPUT TYPE="button" NAME="button"  Value="Simulate" onClick="theBigFunction(this.form)"><br>
+</form>
+
+    <script>
+const allRanges = document.querySelectorAll(".range-wrap");
+allRanges.forEach(wrap => {
+  const range = wrap.querySelector(".range");
+  const bubble = wrap.querySelector(".bubble");
+  range.value = 0
+
+  range.addEventListener("input", () => {
+    setBubble(range, bubble);
+  });
+  setBubble(range, bubble);
+});
+
+function setBubble(range, bubble) {
+  const val = range.value;
+  const min = range.min ? range.min : 0;
+  const max = range.max ? range.max : 100;
+  const newVal = Number(((val - min) * 100) / (max - min));
+  const txt = (val.toString()).concat('%')
+  bubble.innerHTML = txt;
+
+  // Sorta magic numbers based on size of the native UI thumb
+  bubble.style.left = `calc((${newVal}% + (${8 - newVal * 0.15}px))/2)`;
+}
+    </script>
+    <script>
+        // When the user clicks on div, open the popup
+        function myFunction(id) {
+          var popup = document.getElementById(id);
+          popup.classList.toggle("show");
+        }
+    </script>
+</div>
+</body>
+
+
+
+</html>
