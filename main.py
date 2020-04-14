@@ -36,6 +36,11 @@ def forestCountries():
     with open('data/forestcountries.geojson.txt', 'r') as read_file:
         return read_file.read()
 
+@app.route('/api/agriculturecountries')
+def wasteCountries():
+    with open('data/agriculturecountries.geojson.txt', 'r') as read_file:
+        return read_file.read()
+
 @app.route('/api/global_carbon')
 def global_carbon():
     data = []
@@ -64,6 +69,17 @@ def global_carbon():
         else:
             global_forest[row[0]] = row[1]
     data.append(global_forest)
+
+    fp = open('data/agriculture_global_data.csv')
+    reader  =csv.reader(fp)
+    global_agriculture = {}
+    i = 0
+    for row in reader:
+        if i==0:
+            i+=1
+        else:
+            global_agriculture[row[0]] = row[1]
+    data.append(global_agriculture)
 
     
     return json.dumps(data)
