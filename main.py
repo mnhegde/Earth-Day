@@ -1,9 +1,13 @@
-#Created by Manu Hegde on April 2020
+#Created by Manu Hegde, Pierre Lessard, and Spencer Evans-Cole on April 2020
 from game import genEvent
 from flask import Flask, render_template, request
 import csv, json
 
 app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('transition.html')
 
 @app.route('/map')
 def map():
@@ -144,4 +148,5 @@ def markerInfo():
 
 
 if __name__ == '__main__':
+    print(open('static/instructions.txt', 'r').read())
     app.run(debug=True, port=9000)
