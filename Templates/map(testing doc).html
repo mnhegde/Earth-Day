@@ -26,6 +26,10 @@
         <style>
             #map { position: absolute; top:0; bottom: 0; left: 0; right: 0; }
 
+            html {
+              scroll-behavior: 'smooth';
+            }
+
             .info {
                 padding: 6px 8px;
                 font: 14px/16px Arial, Helvetica, sans-serif;
@@ -386,6 +390,13 @@
   color: white;
 }
 
+#buttonContainer {
+  position: absolute;
+  bottom: 10px;
+  right: 5px;
+  z-index: 999;
+}
+
 
         </style>
     </head>
@@ -406,6 +417,9 @@
         <div id="info-pane" class="leaflet-bar chart-container">
             <button onclick=graphData() id='loadGraph' class='ui button'>Load Graph</button>
             
+        </div>
+        <div id='buttonContainer' class='leaflet-bar'>
+          <button class='ui button' style='position: absolute; bottom: 150px; right: 5px; background-color: dodgerblue; color: white;'>Next Step</button>
         </div>
         <script>
             let map = L.map('map').setView([0, 0], 2);
@@ -488,9 +502,11 @@
 
               geojson_agriculture = L.geoJSON(agriculture_data, {style: style, onEachFeature: onEachFeature})
 
+              currentLayer = geojson_carbon
+
               switchLayers(geojson_carbon, geojson_forest, geojson_agriculture)
               addControls()
-              createSearch(geojson_carbon)
+              createSearch(currentLayer)
             }
 
             getMapData()
@@ -736,32 +752,40 @@ function onBaseLayerChange(e) {
     if (e.name == 'CO2 per Country') {
       this.removeControl(info)
       this.removeControl(legend)
+      this.removeControl(searchControl)
       data_type = 'carbon'
       legend.addTo(map);
       info.addTo(map);
+      createSearch(geojson_carbon)
+      
       
     }
 
     else if (e.name == 'Forest Loss per Country') {
       this.removeControl(info)
       this.removeControl(legend)
+      this.removeControl(searchControl)
       data_type = 'forest'
       legend.addTo(map);
       info.addTo(map);
+      createSearch(geojson_forest)
       
     }
 
     else if (e.name=='Agricultural Production per Country') {
       this.removeControl(info)
       this.removeControl(legend)
+      this.removeControl(searchControl)
       data_type = 'agriculture'
       legend.addTo(map);
       info.addTo(map);
+      createSearch(geojson_agriculture)
     }
 
     else if (e.name == 'Clear') {
       this.removeControl(info)
       this.removeControl(legend)
+      this.removeControl(searchControl)
     }
 }
 function graphData() {
@@ -844,11 +868,11 @@ function graphData() {
                                 borderJoinStyle: 'miter',
                                 pointBorderColor: 'rgba(102, 51, 153, 1)',
                                 pointBackgroundColor: '#fff',
-                                pointBorderWidth: 1,
+                                pointBorderWidth: 0,
                                 pointHoverRadius: 5,
                                 pointHoverBackgroundColor: 'rgba(102, 51, 153, 1)',
                                 pointHoverBorderColor: 'rgba(220, 220, 220, 1)',
-                                pointRadius: 2,
+                                pointRadius: 0,
                                 pointHitRadius: 10,
                                 data: carbon_amounts
                             }, 
@@ -864,11 +888,11 @@ function graphData() {
                                 borderJoinStyle: 'miter',
                                 pointBorderColor: 'rgba(240, 52, 52, 1)',
                                 pointBackgroundColor: '#fff',
-                                pointBorderWidth: 1,
+                                pointBorderWidth: 0,
                                 pointHoverRadius: 5,
                                 pointHoverBackgroundColor: 'rgba(240, 52, 52, 1)',
                                 pointHoverBorderColor: 'rgba(220, 220, 220, 1)',
-                                pointRadius: 2,
+                                pointRadius: 0,
                                 pointHitRadius: 10,
                                 data: forest_data
 
@@ -935,8 +959,7 @@ function graphData() {
 
 
         function createSearch(currentlayer) {
-          console.log(currentlayer)
-          let searchControl = new L.Control.Search({
+          window.searchControl = new L.Control.Search({
           layer: currentlayer,
           propertyName: 'ADMIN',
           marker: false,
