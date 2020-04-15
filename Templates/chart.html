@@ -108,7 +108,7 @@ body {
     }
 </style>
 <head><title>Chart HW / TEST AREA</title></head>
-<html lang="en">
+<html lang="en" id = 'html'>
 <title>W3.CSS Template</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -372,8 +372,11 @@ barchart = new Chart(chart, {
             }
     
         function theBigFunction (form) { //pretty much the main game function is in here
+            var scroll_element = document.getElementById('html')
+            scroll_element.style.scrollBehavior = 'auto'
             scrollToTop()
-            
+            scroll_element.style.scrollBehavior = 'smooth'
+
             var acarinc = 9.22
             var electricity = [form.electricity.value,24.9,acarinc*24.9/100]
             var industry = [form.industry.value,19,acarinc*19/100]
