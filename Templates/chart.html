@@ -160,7 +160,7 @@ body {
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'></script>
 <script>
 
-fetch('/api/global_carbon')
+fetch('/api/global_carbon_pierre')
             .then(function (response) {
                 return response.json();
             })
@@ -171,11 +171,6 @@ fetch('/api/global_carbon')
                     years.push(year)
                     carbon_amounts.push(myJSON[year])
                 }
-                for (let g =0; g<5; g++) {
-                    years.pop()
-                    carbon_amounts.pop()
-                }
-                console.log(carbon_amounts)
 
 var chart = document.getElementById('scatter').getContext('2d');
 Chart.defaults.global.responsive = false;
