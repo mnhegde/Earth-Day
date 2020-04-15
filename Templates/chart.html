@@ -160,7 +160,7 @@ body {
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'></script>
 <script>
 
-fetch('/api/global_carbon')
+fetch('/api/global_carbon_pierre')
             .then(function (response) {
                 return response.json();
             })
@@ -213,6 +213,10 @@ scatterchart = new Chart(chart, {
                 scaleLabel: {
                     display: true,
                     labelString: 'Atmospheric Carbon Dioxide Level (ppm)'
+                },
+                ticks: {
+                min: 300,    // minimum will be 0, unless there is a lower value.
+                // OR //
                 }
             },
 
@@ -256,8 +260,11 @@ fetch('/api/global_carbon_increase')
                 carbon_changes.push(myJSON[i]['dif'])
             }
 
+
 var chart = document.getElementById('bar').getContext('2d');
 Chart.defaults.global.responsive = false;
+year_ranges.pop()
+carbon_changes.pop()
 year_ranges.push('2015-2019')
 carbon_changes.push(9.22)
 

@@ -105,6 +105,23 @@ def global_carbon_increase():
                     f=0
     return json.dumps(global_carbon_increase)
 
+@app.route('/api/global_carbon_pierre')
+def global_carbon_pierre():
+    fp = open(r"C:\Users\root\Documents\Python\Earth_Engine\data\archive.csv", 'r')
+    reader = csv.reader(fp)
+    global_carbon = {}
+    i=0
+    for row in reader:
+        if i==0:
+            i += 1
+        else:
+            if row[1] == '12':
+                if row[3]:
+                    global_carbon[row[0]] = row[3]
+            else:
+                i += 1
+    return json.dumps(global_carbon)
+
 @app.route('/chart')
 def chart_page():
     return render_template('chart.html')
