@@ -10,8 +10,9 @@
         crossorigin=""></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/transition.min.js'></script>
-        <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/transition.min.css">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/transition.min.js'></script>
+    <link rel='stylesheet'
+        href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/transition.min.css">
     <style>
         #map {
             position: absolute;
@@ -103,7 +104,7 @@
 
         .wholeScreen {
             position: absolute;
-            font: 14px/16px Arial, Helvetica, sans-serif;
+            font: 16px/16px Arial, Helvetica, sans-serif;
             background: white;
             background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
@@ -114,8 +115,9 @@
             height: fit-content;
             width: 99vw;
             border-radius: 5px;
-            font-size: 20px;
+
             align-items: center;
+            vertical-align: middle;
         }
 
         .leaflet-top {
@@ -149,8 +151,8 @@
             margin: -145px 0 0 -345px;
 
         }
-        .selector
-        {
+
+        .selector {
             position: absolute;
             z-index: 410;
             cursor: pointer;
@@ -166,27 +168,32 @@
             border-radius: 5px;
             color: black;
             font-weight: bold;
-            
+
         }
-       .e1{
-            left:50%;
-            bottom:17%;
+
+        .e1 {
+            left: 50%;
+            bottom: 17%;
         }
-        .e2{
-            left:43%;
-            bottom:17%;
+
+        .e2 {
+            left: 43%;
+            bottom: 17%;
         }
-        .e3{
-            left:57%;
-            bottom:17%;
+
+        .e3 {
+            left: 57%;
+            bottom: 17%;
         }
-        .e4{
-            left:64%;
-            bottom:17%;
+
+        .e4 {
+            left: 64%;
+            bottom: 17%;
         }
-        .e5{
-            left:36%;
-            bottom:17%;
+
+        .e5 {
+            left: 36%;
+            bottom: 17%;
         }
     </style>
 </head>
@@ -209,11 +216,7 @@
     <div id="event5" class='leaflet-bar eventText eventButton' style="left: 36%;">
         <h4 id='e5h4'>Reduce polution 11s</h4>
     </div>
-    <div id="disasterSelector" class='hide'>
-        <table>
-            <tr><th>Disasters</th></tr>
-        </table>
-    </div>
+
     <div id="infoMenu" class='info' style="right: 1%;height: fit-content;">
         <table>
             <tr>
@@ -223,16 +226,20 @@
             <tr></tr>
             <tr>
                 <td style="float: left;">Oxygen:</td>
-                <td style="float: right;" id='o2Level'> %%</td>
+                <td style="float: right;" id='o2Level'> 75%</td>
             </tr>
             <tr>
-                <td style="float: left;">Active Events:&emsp;</td>
-                <td style="float: right;" id='eventList'>event here</td>
+                <td style="float: left;">Number of Active Events:&emsp;</td>
+                <td style="float: right;" id='eventList'>0</td>
+            </tr>
+            <tr>
+                <td style="float: left;">Event Health:&emsp;</td>
+                <td style="float: right;" id='eventHealth'>0</td>
             </tr>
         </table>
     </div>
     <div class='wholeScreen'>
-        <marquee direction='right'id="currentEvent">
+        <marquee direction='right' id="eventTop">
 
         </marquee>
     </div>
@@ -248,28 +255,38 @@
             onclick="start()">
             Play!</button>
     </div>
+    <div class="hide start" id='lossScreen' style="display: flex;
+    align-items: center;
+    justify-content: center ">
+        <h1>You Lose!</h1>
 
+    </div>
+    <div class="hide start" id='winScreen' style="display: flex;
+    align-items: center;
+    justify-content: center ">
+        <h1>You Win!</h1>
+
+    </div>
 
 </body>
 <script>
-    let currentEvent=[]
-    let currentCountries=[]
-    let markers=[]
-    let currentDamage=[]
-    let currentHealth=[]
-    let posibleEvents=[]
-    let posibleCords=[]
-    let posibleDot=[]
-    let posibleCountries=[]
-    let posibleHealth=[]
+    let currentEvent = []
+    let currentCountries = []
+    let markers = []
+    let currentDamage = []
+    let currentHealth = []
+    let eventSelectorList = []
     let running = false;
     let minutes = 0;
     let hours = 0;
     let days = 1;
     let months = 0;
-    let monthNames = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September","October", "November", "December"];
+    let monthNames = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October",
+        "November", "December"
+    ];
     let monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     let oxygenLevel = 75;
+
     let map = L.map('map').setView([0, 0], 2);
     L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=gFX05mk9hDIatdpgPG7C', {
         attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
@@ -293,70 +310,164 @@
 
     }
     timer.addTo(map)
+
     function start() {
         $('#startScreen').transition('fade down', function () {
             running = true;
             console.log(running);
-            tick()
-            Cool1()
-            Cool2()
-            Cool3()
-            Cool4()
-            Cool5()
-            oLevel()
-        })
-    }
-    function createEvent()
-    {
-        fetch('/api/game')
-        .then(response => response.json())
-        .then(myJson =>{
-            
-            let picker = Math.floor(Math.random()*50)
+            if (running === true) {
+                tick()
+                Cool1()
+                Cool2()
+                Cool3()
+                Cool4()
+                Cool5()
+                oLevel()
+                createEvent()
+                fetch('api/game')
+                    .then(response => response.json())
+                    .then(myJson => {
+                        document.getElementById('eventTop').innerHTML = 'The event is ' + myJson[0][
+                            'event'] +
+                            ' it is in ' + myJson[0]['country'] + ' it is doing ' + myJson[0]['damage'] +
+                            " damage and it has " + myJson[0]['health'] + ' health.';
+                        startMarker = L.marker(myJson[0]['coord'], {
+                            title: myJson[0]['country']
+                        })
+                        startMarker.bindPopup('<b>' + myJson[0]['event'] + '</b>');
+                        markers.push(startMarker);
+                        startMarker.addTo(map);
+                        currentEvent.push(myJson[0]['event']);
+                        currentHealth.push(myJson[0]['health']);
+                        currentDamage.push(myJson[0]['damage']);
+                        document.getElementById('eventList').innerHTML = currentEvent.length;
+                        document.getElementById('eventHealth').innerHTML = currentHealth[0];
+                    })
 
-            currentEvent = document.getElementById('currentEvent')
-            currentEvent.innerHTML = 'The event is ' + myJson[picker]['event']
+            }
         })
     }
+
+    function createEvent() {
+        setInterval(function () {
+
+            fetch('/api/game')
+                .then(response => response.json())
+                .then(myJson => {
+                    newEvent = Math.floor(Math.random() * 49);
+                    document.getElementById('eventTop').innerHTML = 'The event is ' + myJson[newEvent][
+                        'event'
+                    ] + ' it is in ' + myJson[newEvent]['country'] + ' it is doing ' + myJson[newEvent][
+                        'damage'
+                    ] + " damage and it has " + myJson[newEvent]['health'] + ' health.';
+                    marker = L.marker(myJson[newEvent]['coord'], {
+                        title: myJson[newEvent]['country']
+                    });
+                    marker.bindPopup('<b>' + myJson[newEvent]['event'] + '</b>');
+                    markers.push(marker);
+                    marker_layer =  L.layerGroup(markers)
+                    marker_layer.addTo(map);
+                    currentEvent.push(myJson[newEvent]['event']);
+                    currentHealth.push(myJson[newEvent]['health']);
+                    currentDamage.push(myJson[newEvent]['damage']);
+                    document.getElementById('eventList').innerHTML = currentEvent.length;
+                    document.getElementById('eventHealth').innerHTML = currentHealth.reduce(add);
+                    if (currentHealth.reduce(add) <= 0) {
+                        document.getElementById('eventHealth').innerHTML = 0
+                    }
+                    Cool1(marker_layer);
+                })
+                
+        }, 10000)
+    }
+    let loss = false;
+    let win = false;
+    let x = 0;
+    
+    function add(a, b) {
+        return a + b;
+    }
+
     function oLevel() {
         setInterval(function () {
-            document.getElementById('o2Level').innerHTML = oxygenLevel + '%'
-        }, 100)
-    }
-    function Cool1() {
-        let num = 3;
-        let e1ready = false;
 
+
+            oxygenLevel -= currentDamage.reduce(add);
+        }, 10000)
         setInterval(function () {
+            document.getElementById('o2Level').innerHTML = oxygenLevel + '%';
+            if (oxygenLevel <= 0) {
+                oxygenLevel = 0;
+                $('#lossScreen').removeClass('hide');
+            } //loss condition
+        }, 10);
+        setInterval(function () {
+            if (months === 11 && days === 31 && oxygenLevel >= 80) //win condition
+            {
+                $('#winScreen').removeClass('hide');
+            }
+            if (months === 11 && days === 31 && !(oxygenLevel >= 80)) //2nd loss
+            {
+                $('#lossScreen').removeClass('hide');
+            }
+        }, 10)
+        setInterval(function(){
+            if (isNaN( document.getElementById('eventHealth')===true)) {
+                        document.getElementById('eventHealth').innerHTML ='0'
+                    }
+        },10)
+    }
+    //damage function to all events
+   
+    //update start menu
+    //markers
+
+
+    function Cool1(marker_layer) {
+        let num = 3;
+        console.log(marker_layer)
+        setInterval(function (marker_layer) {
 
             num--;
-
+            
             if (num < 0) {
+                console.log('num<0')
                 document.getElementById('e1h4').innerHTML = " "
                 num = ' is ready!'
-                document.getElementById('e1h4').innerHTML += 'Spread awareness' + num
-                e1ready = true;
+                document.getElementById('e1h4').innerHTML = 'Spread awareness for 3 damage' + num;
+                $('#event1').click(function () {
+                    num = 4;
+                    currentHealth[0] -= 3;
+                    document.getElementById('eventHealth').innerHTML = currentHealth.reduce(add);
+                    
+                    if (currentHealth[0] - 3 <= 0) {
+                        console.log(marker_layer)
+                        oxygenLevel += 3;
+                        currentEvent.shift();
+                        currentCountries.shift();
+                        currentDamage.shift();
+                        currentHealth.shift();
+                        map.removeLayer(marker_layer);
+                        markers.shift()
+                        marker_layer.addTo(map)
+                        document.getElementById('eventList').innerHTML = currentEvent.length;
+                        
+
+                    } else {
+                        null
+                    }
+                })
             }
             if (num > 0) {
                 document.getElementById('e1h4').innerHTML = "Spread awareness " + num + 's';
-                e1ready = false;
+                $('#event1').off()
             }
-           if(e1ready===true)
-           {
-                $('#event1').click(function(){
-                    $('#disasterSelector').removeClass();
-                    $('#disasterSelector').addClass('e1');
-                    $('#disasterSelector').addClass('selector');
-                   
-                })
-           }
         }, 1000)
-
     }
 
     function Cool2() {
         let num = 5;
-        let e2ready = false;
+
         setInterval(function () {
 
             num--;
@@ -364,30 +475,22 @@
             if (num < 0) {
                 document.getElementById('e2h4').innerHTML = " "
                 num = ' is ready!'
-                document.getElementById('e2h4').innerHTML += 'Donate resources' + num;
-                e2ready = true;
+                document.getElementById('e2h4').innerHTML += 'Donate resources for 5 damage' + num;
+                $('#event2').click(function () {
+                    num = 6;
+
+                })
             }
             if (num > 0) {
                 document.getElementById('e2h4').innerHTML = "Donate resources " + num + 's';
-                e2ready = false;
+                $('#event2').off();
             }
-            if(e2ready===true)
-           {
-                $('#event2').click(function(){
-                    $('#disasterSelector').removeClass();
-                    $('#disasterSelector').addClass('e2');
-                    $('#disasterSelector').addClass('selector');
-                    
-                })
-           }
         }, 1000)
 
     }
 
     function Cool3() {
         let num = 7;
-
-        let e3ready = false;
         setInterval(function () {
 
             num--;
@@ -395,29 +498,23 @@
             if (num < 0) {
                 document.getElementById('e3h4').innerHTML = " "
                 num = ' is ready!'
-                document.getElementById('e3h4').innerHTML += 'Increase regulations' + num;
-                e3ready = true;
+                document.getElementById('e3h4').innerHTML += 'Increase regulations for 7 damage' + num;
+                $('#event3').click(function () {
+                    num = 8;
+
+                })
             }
             if (num > 0) {
                 document.getElementById('e3h4').innerHTML = "Increase regulations " + num + 's';
-                e2ready = false;
+
+                $('#event3').off()
             }
-            if(e3ready===true)
-           {
-                $('#event3').click(function(){
-                    $('#disasterSelector').removeClass();
-                    $('#disasterSelector').addClass('e3');
-                    $('#disasterSelector').addClass('selector');
-                    
-                })
-           }
+
         }, 1000)
     }
 
     function Cool4() {
         let num = 9;
-
-        let e4ready = false;
         setInterval(function () {
 
             num--;
@@ -425,28 +522,23 @@
             if (num < 0) {
                 document.getElementById('e4h4').innerHTML = " "
                 num = ' is ready!'
-                document.getElementById('e4h4').innerHTML += 'Clean up the enviorment' + num
-                e4ready = true;
+                document.getElementById('e4h4').innerHTML += 'Clean up the enviorment for 9 damage' + num
+                $('#event4').click(function () {
+                    num = 10;
+
+                })
             }
             if (num > 0) {
                 document.getElementById('e4h4').innerHTML = "Clean up the enviorment " + num + 's';
-                e4ready = false;
+                $('#event4').off()
             }
-            if(e4ready===true)
-           {
-                $('#event4').click(function(){
-                    $('#disasterSelector').removeClass();
-                    $('#disasterSelector').addClass('e4');
-                    $('#disasterSelector').addClass('selector');
-                    
-                })
-           }
+
         }, 1000)
     }
 
     function Cool5() {
         let num = 11;
-        let e5ready = false;
+
 
         setInterval(function () {
 
@@ -455,22 +547,16 @@
             if (num < 0) {
                 document.getElementById('e5h4').innerHTML = " "
                 num = ' is ready!'
-                document.getElementById('e5h4').innerHTML += 'Reduce polution' + num
-                e5ready = true;
+                document.getElementById('e5h4').innerHTML += 'Reduce polution for 11 damage' + num
+                $('#event5').click(function () {
+                    num = 12;
+
+                })
             }
             if (num > 0) {
                 document.getElementById('e5h4').innerHTML = "Reduce polution " + num + 's';
-                e5ready= false;
+                $('#event5').off()
             }
-            if(e5ready===true)
-           {
-                $('#event5').click(function(){
-                    $('#disasterSelector').removeClass();
-                    $('#disasterSelector').addClass('e5');
-                    $('#disasterSelector').addClass('selector');
-                    
-                })
-           }
         }, 1000)
     }
 
@@ -495,9 +581,8 @@
 
 
             timer._div.innerHTML = monthNames[months] + " " + days + " " + hours + ":" + minutes;
-        }, 5 )
+        }, 5)
     }
-    createEvent()
 </script>
 
 </html>
