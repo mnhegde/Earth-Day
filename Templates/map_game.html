@@ -140,7 +140,7 @@
             border: 1px solid black;
             font-weight: bold;
             z-index: 410;
-            height: 290px;
+            height: fit-content;
             width: 690px;
             border-radius: 5px;
             font-size: 20px;
@@ -249,7 +249,9 @@
         <h4>By, Spencer Evans-Cole</h4>
         <p style="line-height: 1.3;">The goal of this game is to have the oxygen level be above 80% by the end of the
             year. To do this there are 5 events you can use at the bottom of the screen to prevent disasters. Disaster
-            periodicly happen and will ramp up over time. Good luck!</p>
+            periodicly happen. Whenever you do enough damage to dystroy an event the marker will turn black. On the side of the screen
+            it shows your current oxygen level, total active events, and the total ammount of health of all active events. The top of the screen
+            tells you the most recent event, where it is and how much health and damage it has. The left side of the screen shows a counter of time that has passed. Good luck!</p>
         <button
             style="padding: 8px 20px; background-color: transparent; border: 2px solid black; font-size: 20px; font-weight: bold; border-radius: 5px;cursor: pointer;"
             onclick="start()">
@@ -271,21 +273,21 @@
 </body>
 <script>
     var offIcon = new L.Icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-black.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-});
-var onIcon = new L.Icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-});
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-black.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+    var onIcon = new L.Icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
     let currentEvent = []
     let currentCountries = []
     let markers = []
@@ -330,7 +332,7 @@ var onIcon = new L.Icon({
     function start() {
         $('#startScreen').transition('fade down', function () {
             running = true;
-            console.log(running);
+            (running);
             if (running === true) {
                 tick()
                 Cool1()
@@ -344,7 +346,8 @@ var onIcon = new L.Icon({
                     .then(response => response.json())
                     .then(myJson => {
                         document.getElementById('eventTop').innerHTML = 'The event is ' + myJson[0][
-                            'event'] +
+                                'event'
+                            ] +
                             ' it is in ' + myJson[0]['country'] + ' it is doing ' + myJson[0]['damage'] +
                             " damage and it has " + myJson[0]['health'] + ' health.';
                         startMarker = L.marker(myJson[0]['coord'], {
@@ -383,35 +386,42 @@ var onIcon = new L.Icon({
                     });
                     marker.bindPopup('<b>' + myJson[newEvent]['event'] + '</b>');
                     markers.push(marker);
-                    marker_layer =  L.layerGroup(markers)
+                    marker_layer = L.layerGroup(markers)
                     marker_layer.addTo(map);
                     currentEvent.push(myJson[newEvent]['event']);
                     currentHealth.push(myJson[newEvent]['health']);
                     currentDamage.push(myJson[newEvent]['damage']);
                     document.getElementById('eventList').innerHTML = currentEvent.length;
-                    document.getElementById('eventHealth').innerHTML = currentHealth.reduce(add);
-                    if (currentHealth.reduce(add) <= 0) {
+                    document.getElementById('eventHealth').innerHTML = add(currentHealth);
+                    if (add(currentHealth) <= 0) {
                         document.getElementById('eventHealth').innerHTML = 0
                     }
-                    Cool1(marker_layer);
+                    
                 })
-                
-        }, 10000)
+
+        }, 5000)
     }
     let loss = false;
     let win = false;
     let x = 0;
-    
-    function add(a, b) {
-        return a + b;
+    var total = 0;
+
+    function add(input) {
+        for (var i = 0; i < input.length; i++) {
+            if (isNaN(input[i])) {
+                return 0;
+            }
+            total += Number(input[i]);
+        }
+        return total;
     }
 
     function oLevel() {
         setInterval(function () {
 
 
-            oxygenLevel -= currentDamage.reduce(add);
-        }, 10000)
+            oxygenLevel -= add(currentHealth);
+        }, 5000)
         setInterval(function () {
             document.getElementById('o2Level').innerHTML = oxygenLevel + '%';
             if (oxygenLevel <= 0) {
@@ -429,45 +439,47 @@ var onIcon = new L.Icon({
                 $('#lossScreen').removeClass('hide');
             }
         }, 10)
-        setInterval(function(){
-            if (isNaN( document.getElementById('eventHealth')===true)) {
-                        document.getElementById('eventHealth').innerHTML ='0'
-                    }
-        },10)
+        setInterval(function () {
+            if (isNaN(document.getElementById('eventHealth') === true)) {
+                document.getElementById('eventHealth').innerHTML = '0'
+            }
+        }, 10)
     }
     //damage function to all events
-   
+
     //update start menu
     //markers
 
+    let eventCounter = 0;
 
-    function Cool1(marker_layer) {
+    function Cool1() {
         let num = 3;
-        console.log(marker_layer)
-        setInterval(function (marker_layer) {
+
+        setInterval(function () {
 
             num--;
-            
+
             if (num < 0) {
-                console.log('num<0')
+
                 document.getElementById('e1h4').innerHTML = " "
                 num = ' is ready!'
                 document.getElementById('e1h4').innerHTML = 'Spread awareness for 3 damage' + num;
                 $('#event1').click(function () {
                     num = 4;
                     currentHealth[0] -= 3;
-                    document.getElementById('eventHealth').innerHTML = currentHealth.reduce(add);
-                    
+                    document.getElementById('eventHealth').innerHTML = add(currentHealth);
+
                     if (currentHealth[0] - 3 <= 0) {
-                        console.log(marker_layer)
+
                         oxygenLevel += 3;
                         currentEvent.shift();
                         currentCountries.shift();
                         currentDamage.shift();
                         currentHealth.shift();
-                        map
+                        markers[eventCounter].setIcon(offIcon);
+                        eventCounter++;
                         document.getElementById('eventList').innerHTML = currentEvent.length;
-                        
+
 
                     } else {
                         null
@@ -482,95 +494,165 @@ var onIcon = new L.Icon({
     }
 
     function Cool2() {
-        let num = 5;
+        let num = 4;
 
         setInterval(function () {
 
             num--;
 
             if (num < 0) {
+               
                 document.getElementById('e2h4').innerHTML = " "
                 num = ' is ready!'
-                document.getElementById('e2h4').innerHTML += 'Donate resources for 5 damage' + num;
+                document.getElementById('e2h4').innerHTML = 'Donate resources for 5 damage' + num;
                 $('#event2').click(function () {
-                    num = 6;
+                    num = 5;
+                    currentHealth[0] -= 5;
+                    document.getElementById('eventHealth').innerHTML = add(currentHealth);
 
+                    if (currentHealth[0] - 5 <= 0) {
+
+                        oxygenLevel += 5;
+                        currentEvent.shift();
+                        currentCountries.shift();
+                        currentDamage.shift();
+                        currentHealth.shift();
+                        markers[eventCounter].setIcon(offIcon);
+                        eventCounter++;
+                        document.getElementById('eventList').innerHTML = currentEvent.length;
+
+
+                    } else {
+                        null
+                    }
                 })
             }
             if (num > 0) {
                 document.getElementById('e2h4').innerHTML = "Donate resources " + num + 's';
-                $('#event2').off();
+                $('#event2').off()
             }
         }, 1000)
 
     }
 
     function Cool3() {
-        let num = 7;
+        let num = 6;
+
         setInterval(function () {
 
             num--;
 
             if (num < 0) {
+                ('num<0')
                 document.getElementById('e3h4').innerHTML = " "
                 num = ' is ready!'
-                document.getElementById('e3h4').innerHTML += 'Increase regulations for 7 damage' + num;
+                document.getElementById('e3h4').innerHTML = 'Increase regulations for 7 damage' + num;
                 $('#event3').click(function () {
-                    num = 8;
+                    num = 7;
+                    currentHealth[0] -= 7;
+                    document.getElementById('eventHealth').innerHTML = add(currentHealth);
 
+                    if (currentHealth[0] - 7 <= 0) {
+
+                        oxygenLevel += 7;
+                        currentEvent.shift();
+                        currentCountries.shift();
+                        currentDamage.shift();
+                        currentHealth.shift();
+                        markers[eventCounter].setIcon(offIcon);
+                        eventCounter++;
+                        document.getElementById('eventList').innerHTML = currentEvent.length;
+
+
+                    } else {
+                        null
+                    }
                 })
             }
             if (num > 0) {
-                document.getElementById('e3h4').innerHTML = "Increase regulations " + num + 's';
-
+                document.getElementById('e3h4').innerHTML = "Increase Regulations " + num + 's';
                 $('#event3').off()
             }
-
         }, 1000)
     }
 
     function Cool4() {
-        let num = 9;
+        let num = 8;
+
         setInterval(function () {
 
             num--;
 
             if (num < 0) {
+               
                 document.getElementById('e4h4').innerHTML = " "
                 num = ' is ready!'
-                document.getElementById('e4h4').innerHTML += 'Clean up the enviorment for 9 damage' + num
+                document.getElementById('e4h4').innerHTML = 'Clean up Enviorment for 9 damage' + num;
                 $('#event4').click(function () {
-                    num = 10;
+                    num = 9;
+                    currentHealth[0] -= 9;
+                    document.getElementById('eventHealth').innerHTML = add(currentHealth);
 
+                    if (currentHealth[0] - 9 <= 0) {
+
+                        oxygenLevel += 9;
+                        currentEvent.shift();
+                        currentCountries.shift();
+                        currentDamage.shift();
+                        currentHealth.shift();
+                        markers[eventCounter].setIcon(offIcon);
+                        eventCounter++;
+                        document.getElementById('eventList').innerHTML = currentEvent.length;
+
+
+                    } else {
+                        null
+                    }
                 })
             }
             if (num > 0) {
-                document.getElementById('e4h4').innerHTML = "Clean up the enviorment " + num + 's';
+                document.getElementById('e4h4').innerHTML = "Clean up Enviorment " + num + 's';
                 $('#event4').off()
             }
-
         }, 1000)
     }
 
     function Cool5() {
         let num = 11;
 
-
         setInterval(function () {
 
             num--;
 
             if (num < 0) {
+
                 document.getElementById('e5h4').innerHTML = " "
                 num = ' is ready!'
-                document.getElementById('e5h4').innerHTML += 'Reduce polution for 11 damage' + num
+                document.getElementById('e5h4').innerHTML = 'Reduce Polution for 12 damage' + num;
                 $('#event5').click(function () {
                     num = 12;
+                    currentHealth[0] -= 12;
+                    document.getElementById('eventHealth').innerHTML = add(currentHealth);
 
+                    if (currentHealth[0] - 12 <= 0) {
+
+                        oxygenLevel += 12;
+                        currentEvent.shift();
+                        currentCountries.shift();
+                        currentDamage.shift();
+                        currentHealth.shift();
+                        markers[eventCounter].setIcon(offIcon);
+                        eventCounter++;
+                        document.getElementById('eventList').innerHTML = currentEvent.length;
+
+
+                    } else {
+                        null
+                    }
                 })
             }
             if (num > 0) {
-                document.getElementById('e5h4').innerHTML = "Reduce polution " + num + 's';
+                document.getElementById('e5h4').innerHTML = "Reduce Polution " + num + 's';
                 $('#event5').off()
             }
         }, 1000)

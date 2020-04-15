@@ -9,7 +9,7 @@ events = ['Wildfire','Tsunami','Hurricane','Earthquake','Increase in carbon emis
 dot = [6,3,3,9,5,2,4,9,4,5,6,10,3,9,7,8]
 hp = [10,6,8,6,5,3,7,10,4,6,12,15,7,4,3,5]  
 def genEvent():
-    with open('data\\average-latitude-longitude-countries.csv', mode='r') as f:
+    with open(r'data\average-latitude-longitude-countries.csv', mode='r') as f:
         reader = csv.DictReader(f, delimiter=',')  
         for n, row in enumerate(reader):
             if not n:#skip header
