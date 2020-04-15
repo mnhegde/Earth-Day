@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css'>
+
+        <style>
+
+            #graphButton {
+                position: absolute;
+                top: 15%;
+                right: 20%;
+                height: 35%;
+                width: 25%
+            }
+
+            #gameButton {
+                position: absolute;
+                top: 60%;
+                right: 37.5%;
+                height: 35%;
+                width: 25%
+            }
+
+            #mapButton {
+                position: absolute;
+                top: 15%;
+                left: 20%;
+                height: 35%;
+                width: 25%
+            }
+
+
+            
+        </style>
+    </head>
+    <body class='home'>
+        <br>
+        <center><h2 style='color: gray'>Climate Change Education Center Home - Choose one of these to view the application</h2></center>
+        <button id='mapButton' class= 'ui icon button' onclick=map()>
+            <i class='map massive icon'></i>
+            <h3>Click for Interactive Map</h3>
+        </button>
+        <button id='graphButton' class='ui icon button' onclick=chart()>
+            <i class='chart line massive icon'></i>
+            <h3>Click for Simulation</h3>
+        </button>
+
+        <button id='gameButton' class='ui icon button' onclick=game()>
+            <i class='gamepad massive icon'></i>
+            <h3>Click for Game</h3>
+        </button>
+
+    <script>
+
+
+        function map() {
+            window.open('/map')
+
+        }
+
+        function game() {
+            window.open('/game')
+        }
+
+        function chart() {
+            window.open('/chart')
+        }
+
+
+    </script>
+    </body>
+</html>

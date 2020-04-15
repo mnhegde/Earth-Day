@@ -5,6 +5,10 @@ import csv, json
 
 app = Flask(__name__)
 
+@app.route('/')
+def home():
+    return render_template('transition.html')
+
 @app.route('/map')
 def map():
     return render_template('map.html')
