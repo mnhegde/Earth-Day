@@ -22,6 +22,10 @@
         <style>
             #map { position: absolute; top:0; bottom: 0; left: 0; right: 0; }
 
+            html {
+              scroll-behavior: 'smooth';
+            }
+
             .info {
                 padding: 6px 8px;
                 font: 14px/16px Arial, Helvetica, sans-serif;
@@ -454,6 +458,7 @@
                 })
                 .then (function (myJSON) {
                   markerInfo.innerHTML = myJSON
+                  markerInfo.scrollTop = 0
                 }); 
                 
             }
@@ -464,6 +469,7 @@
                 return response.json();
             })
             .then(function (myGEOJson) {
+                //this needs to finish before forest
                 geojson_carbon = L.geoJSON(myGEOJson, {style: style, onEachFeature: onEachFeature})
                 geojson_carbon.addTo(map);
 

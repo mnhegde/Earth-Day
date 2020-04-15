@@ -41,7 +41,7 @@ def addMarkers():
 
 
 
-fp = open('data\Countries_Forest_Loss_2018.csv', 'r')
+fp = open('data\Countries_Agriculture_2016.csv', 'r')
 reader = csv.reader(fp)
 
 countries = {}
@@ -51,28 +51,26 @@ for row in reader:
     if i == 0:
         i += 1
         continue
-    countries[row[0]] = row[1]
+    countries[row[0]] = row[2]
     i += 1
 
-with open('data/forestcountries.geojson.txt', 'r') as fp:
+with open('data/wastecountries.geojson.txt', 'r') as fp:
     geoJSON = json.load(fp)
 
 country_list = []
 for key in countries.keys():
     country_list.append(key)
 
-print(countries)
-print(country_list)
 
 for feature in geoJSON['features']:
-    if feature['properties']['ISO_A3'] in country_list:
-        feature['properties']['forest_loss'] = countries[feature['properties']['ISO_A3']]
+    if feature['properties']['ADMIN'] in country_list:
+        feature['properties']['waste'] = countries[feature['properties']['ADMIN']]
             
     else:
         continue
 
 
-with open('data/forestcountries.geojson.txt', 'w') as fp:
+with open('data/wastecountries.geojson.txt', 'w') as fp:
     json.dump(geoJSON, fp)
 
 
