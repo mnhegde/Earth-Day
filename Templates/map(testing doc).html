@@ -59,7 +59,7 @@
 
             .chart-container {
                 height: 59%;
-                width: 26%;
+                width: 30%;
             }
 
             #info-pane {
@@ -79,8 +79,20 @@
                 padding: 1em;
                 background: white;
                 height: 37%;
-                width: 26%;
+                width: 30%;
                 overflow: auto;
+            }
+
+            #start {
+              position: absolute;
+              top: 30%;
+              left: 40%;
+              z-index: 410;
+              background: white;
+              height: 35%;
+              width: 30%;
+              overflow: auto;
+              padding: 1em;
             }
 
             #button-pane1 {
@@ -385,7 +397,7 @@
 #loadGraph {
   position: absolute;
   top: 45%;
-  left: 35%;
+  left: 37.5%;
   background-color:dodgerblue;
   color: white;
 }
@@ -402,11 +414,14 @@
     </head>
     <body>
         <div id="map"></div>
-        <div id='start'>
-          <h3>Climate Change Map!</h3>
-          <center><p>This map will show different factors involved in climate change, and the levels they are at. Please let the map load the data, and read
+        <div id='start' class='leaflet-bar'>
+          <center><h3>Climate Change Map!</h3>
+          <p>This map will show different factors involved in climate change, and the levels they are at. Please let the map load the data, and read
             the instructions before doing anything to understand its features (found in top left).
-          </p></center>
+          </p>
+          <br> <br> <br>
+          <button class='ui button' style='color: white; background-color:dodgerblue' id='startButton' onclick=start()>Close</button>
+        </center>
         </div>
         <div id="button-pane1" class='leaflet-bar'>
             <button id='btn1'><span></span><span></span><span></span>
@@ -447,6 +462,12 @@
           <button class='ui button' style='position: absolute; bottom: 150px; right: 5px; background-color: dodgerblue; color: white;'>Next Step</button>
         </div>
         <script>
+
+          function start() {
+            $('#start').remove();
+          }
+
+
             let map = L.map('map').setView([0, 0], 2);
             L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=gFX05mk9hDIatdpgPG7C', {
                 attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
@@ -826,8 +847,8 @@ function graphData() {
   
   graph = document.createElement('canvas')
   graph.setAttribute('id', 'myChart')
-  graph.style.height = '325px'
-  graph.style.width = '375px'
+  graph.style.height = '90%'
+  graph.style.width = '95%'
  
 
   container.appendChild(graph);
