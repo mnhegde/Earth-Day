@@ -270,6 +270,22 @@
 
 </body>
 <script>
+    var offIcon = new L.Icon({
+    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-black.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+var onIcon = new L.Icon({
+    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
     let currentEvent = []
     let currentCountries = []
     let markers = []
@@ -332,7 +348,8 @@
                             ' it is in ' + myJson[0]['country'] + ' it is doing ' + myJson[0]['damage'] +
                             " damage and it has " + myJson[0]['health'] + ' health.';
                         startMarker = L.marker(myJson[0]['coord'], {
-                            title: myJson[0]['country']
+                            title: myJson[0]['country'],
+                            icon: onIcon
                         })
                         startMarker.bindPopup('<b>' + myJson[0]['event'] + '</b>');
                         markers.push(startMarker);
@@ -361,7 +378,8 @@
                         'damage'
                     ] + " damage and it has " + myJson[newEvent]['health'] + ' health.';
                     marker = L.marker(myJson[newEvent]['coord'], {
-                        title: myJson[newEvent]['country']
+                        title: myJson[newEvent]['country'],
+                        icon: onIcon,
                     });
                     marker.bindPopup('<b>' + myJson[newEvent]['event'] + '</b>');
                     markers.push(marker);
@@ -447,9 +465,7 @@
                         currentCountries.shift();
                         currentDamage.shift();
                         currentHealth.shift();
-                        map.removeLayer(marker_layer);
-                        markers.shift()
-                        marker_layer.addTo(map)
+                        map
                         document.getElementById('eventList').innerHTML = currentEvent.length;
                         
 
