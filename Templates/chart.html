@@ -404,6 +404,9 @@ barchart = new Chart(chart, {
             if (sim_years<5) {
                 sim_years =5
             }
+            else if(sim_years>200) {
+                sim_years=200
+            }
             var inc_differince = acarinc-newinc // the difference the new inc has was with the old
             var yearly_inc_change = inc_differince/sim_years // the change of inc each year
 
@@ -562,7 +565,7 @@ barchart = new Chart(chart, {
     
     How many years will it take for these changes to be completed?
     <div class="popup" onclick="myFunction('myPopup9')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/1200px-Information_icon.svg.png" alt="info" style="width:20px;height:20px;">
-        <span class="popuptext" id="myPopup9">(Default and minimum is 5)</span>
+        <span class="popuptext" id="myPopup9">(Default and minimum is 5. Maximum is 200.)</span>
       </div>
       <br>
         <INPUT TYPE="text" NAME="yearbox" VALUE="" type="number" onkeypress="return isNumberKey(event)"><br><br>
