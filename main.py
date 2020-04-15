@@ -107,7 +107,7 @@ def global_carbon_increase():
 
 @app.route('/api/global_carbon_pierre')
 def global_carbon_pierre():
-    fp = open(r"C:\Users\root\Documents\Python\Earth_Engine\data\archive.csv", 'r')
+    fp = open(r"data/archive.csv", 'r')
     reader = csv.reader(fp)
     global_carbon = {}
     i=0
