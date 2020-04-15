@@ -58,14 +58,14 @@
             }
 
             .chart-container {
-                height: 430px;
-                width: 400px;
+                height: 59%;
+                width: 30%;
             }
 
             #info-pane {
                 position: absolute;
-                bottom: 10px;
-                left: 10px;
+                bottom: 1.5%;
+                left: .7%;
                 z-index: 400;
                 padding: 1em;
                 background: white;
@@ -73,20 +73,32 @@
 
             #marker-pane {
                 position: absolute;
-                bottom: 455px;
-                left: 10px;
+                bottom: 62%;
+                left: .7%;
                 z-index: 400;
                 padding: 1em;
                 background: white;
-                height: 270px;
-                width: 400px;
+                height: 37%;
+                width: 30%;
                 overflow: auto;
+            }
+
+            #start {
+              position: absolute;
+              top: 30%;
+              left: 40%;
+              z-index: 410;
+              background: white;
+              height: 35%;
+              width: 30%;
+              overflow: auto;
+              padding: 1em;
             }
 
             #button-pane1 {
                 position: absolute;
-                bottom: 705px;
-                left: 30px;
+                bottom: 96.5%;
+                left: 2.1%;
                 z-index: 410;
             }
 
@@ -228,8 +240,8 @@
 }
             #button-pane2 {
                 position: absolute;
-                bottom: 420px;
-                left: 30px;
+                bottom: 58%;
+                left: 2.1%;
                 z-index: 410;
             }
 
@@ -384,8 +396,8 @@
 
 #loadGraph {
   position: absolute;
-  bottom: 200px;
-  left: 140px;
+  top: 45%;
+  left: 37.5%;
   background-color:dodgerblue;
   color: white;
 }
@@ -402,13 +414,41 @@
     </head>
     <body>
         <div id="map"></div>
+        <div id='start' class='leaflet-bar'>
+          <center><h3>Climate Change Map!</h3>
+          <p>This map will show different factors involved in climate change, and the levels they are at. Please let the map load the data, and read
+            the instructions before doing anything to understand its features (found in top left).
+          </p>
+          <br> <br> 
+          <button class='ui button' style='color: white; background-color:dodgerblue' id='startButton' onclick=start()>Close</button>
+        </center>
+        </div>
         <div id="button-pane1" class='leaflet-bar'>
             <button id='btn1'><span></span><span></span><span></span>
             </button>
         </div>
         <div id='marker-pane' class='leaflet-bar'>
-            <h3 style= 'color: gray; padding-top: 20px;'>Carbon Dixoide Map!</h3>
-                <p> This map shows different variables that directly impact climate change on Earth</p>
+            <h3 style= 'color: gray; padding-top: 20px;'>Climate Change Map!</h3>
+                <p> 
+                  This map shows different variables that directly impact climate change on Earth. It's goal is to show the relationship between different factors that affect
+                  climate change, and to show the past and the present climate change situation in the world today! Please read the instructions below to learn about all the differnt tools this 
+                  has to offer:
+                  <br> <br>
+                  The layer you are seeing right now depicts Carbon Dioxide Emissions from each country in 2014. At the top right of the screen, you will see an icon which allows you
+                  to switch between layers on the map. Try that out! You can switch to see forst loss, agricultural production, or clear the map!
+                  <br> <br>
+                  You wil also see the markers on the map right now. These are there to highlight significant environmental events in the past, either negative or positive. If you click on a marker,
+                  the content in this section will change, and include a description of the event and its effects, along with some pictures. However, before you do that, please read about the rest of the features!
+                  <br> <br>
+                  On the right side of the map, there are two different sections. In the bottom-right, you can see a color key, which shows how the countries have been filled. In the top right, you will see a 
+                  section that shows data when you hover over a country. Give it a try! If you want to look for a certain country, there is a search bar in the bottom right. Type in the start of the country, and 
+                  it will zoom the map onto it!
+                  <br><br>
+                  Finally, there is the graph. Press the button to load the data on the graph. You can hover over the line to view specific points, and look at the legend to take away/add lines. If you want to focus on
+                  the map, feel free to close this section along with the graph, so you can see more of the map on your screen.
+                  <br><br>
+                  Once you are done with experimenting and interacting with this map, click the Next Step button to move on to the next activity! Hope you enjoy!
+                </p>
         </div>
         <div id="button-pane2" class='leaflet-bar'>
             <button id="btn2"><span></span><span></span><span></span>
@@ -422,6 +462,12 @@
           <button class='ui button' style='position: absolute; bottom: 150px; right: 5px; background-color: dodgerblue; color: white;'>Next Step</button>
         </div>
         <script>
+
+          function start() {
+            $('#start').remove();
+          }
+
+
             let map = L.map('map').setView([0, 0], 2);
             L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=gFX05mk9hDIatdpgPG7C', {
                 attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
@@ -669,7 +715,7 @@
         
         else {
             this._div.innerHTML = '<h4>Forest Loss</h4>' +  (props ?
-            '<b>' + props.ADMIN + '</b><br />' + props.forest_loss + ' hectares'
+            '<b>' + props.ADMIN + '</b><br />' + parseFloat(props.forest_loss).toFixed(3) + ' hectares'
             : 'Hover over a country');
       }
         
@@ -687,7 +733,7 @@
         
         else {
             this._div.innerHTML = '<h4>Agricultural Production</h4>' +  (props ?
-            '<b>' + props.ADMIN + '</b><br />' + props.agriculture + ' million US dollars'
+            '<b>' + props.ADMIN + '</b><br />' + parseFloat(props.agriculture).toFixed(3) + ' million US dollars'
             : 'Hover over a country');
       } 
       } 
@@ -801,8 +847,8 @@ function graphData() {
   
   graph = document.createElement('canvas')
   graph.setAttribute('id', 'myChart')
-  graph.style.height = '325px'
-  graph.style.width = '375px'
+  graph.style.height = '90%'
+  graph.style.width = '95%'
  
 
   container.appendChild(graph);
