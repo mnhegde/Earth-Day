@@ -1,6 +1,6 @@
 # Earth Day
 
-This application was developed for Earth Day, and is meant to help visualize data regarding climate change as well as viewing different factors and their impact on the overall planet. It has three sections: a map showing amounts of variables in different countries, a simulaition showing the effect of variables on CO2 emissions in the future, and a game showing different environmental events and their solutions.
+This application was developed for Earth Day, and is meant to help visualize data regarding climate change as well as viewing different factors and their impact on the overall planet. It has three sections: a map showing amounts of variables in different countries, a simulation showing the effect of variables on CO2 emissions in the future, and a game showing different environmental events and their solutions.
 
 # Development
 <h3>Languages</h3>
